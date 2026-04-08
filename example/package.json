@@ -1,5 +1,5 @@
 {
-  "name": "unix-tty-demo",
+  "name": "unix-tty-example",
   "type": "module",
   "private": true,
   "scripts": {

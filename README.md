@@ -70,7 +70,7 @@ Then drop markdown into `src/content/docs/home/user/...`. The file tree mirrors 
 
 ```sh
 npm install
-npm run dev     # runs the demo site at demo/
+npm run dev     # runs the example site at example/
 ```
 
 ## Themes

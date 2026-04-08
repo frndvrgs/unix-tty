@@ -2,12 +2,12 @@ import { defineConfig } from 'unix-tty/config';
 
 export default defineConfig({
   site: {
-    title: 'unix-tty demo',
+    title: 'unix-tty example',
     description: 'Minimal consumer site used to smoke-test the library.',
     url: 'http://localhost:4321',
   },
   terminal: {
-    hostname: 'demo',
+    hostname: 'example',
     username: 'user',
     home: '/home/user',
     defaultTheme: 'ember',

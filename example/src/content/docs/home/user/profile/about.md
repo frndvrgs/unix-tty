@@ -1,11 +1,11 @@
 ---
 title: about
-author: demo
+author: example
 ---
 
 # about
 
-Hello from the unix-tty demo. This file lives at `/home/user/profile/about.md`
+Hello from the unix-tty example. This file lives at `/home/user/profile/about.md`
 in the virtual filesystem, mirrored from its position under
 `src/content/docs/`.
 
