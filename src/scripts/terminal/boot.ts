@@ -5,7 +5,7 @@ import { createTheme } from './theme.js';
 import { createHistory } from './history.js';
 import { complete } from './tabComplete.js';
 import { buildRegistry, commandNames } from './commands/index.js';
-import type { FsManifest } from './types.js';
+import type { FsManifest, OutputSink } from './types.js';
 
 export default async function boot(config: UnixTtyConfig): Promise<void> {
   const root = document.getElementById('terminal');
@@ -68,6 +68,48 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
   };
   updatePrompt();
 
+  // The output sink used for everything printed AFTER the prompt line
+  // exists. It inserts before promptLine so the prompt always stays at
+  // the bottom and clear() only wipes the lines above it (leaving the
+  // prompt intact). Every command uses this sink, and so do the
+  // "command not found" and catch-branch errors in run() below — using
+  // the append-only `output` created earlier would cause those errors
+  // to pile up under the prompt and survive clear().
+  const commandOut: OutputSink = {
+    line: (text) => {
+      const el = document.createElement('div');
+      el.className = 'terminal-line';
+      el.textContent = text ?? '';
+      root.insertBefore(el, promptLine);
+      if (!isSelecting()) window.scrollTo(0, document.body.scrollHeight);
+    },
+    dim: (text) => {
+      const el = document.createElement('div');
+      el.className = 'terminal-line terminal-dim';
+      el.textContent = text;
+      root.insertBefore(el, promptLine);
+    },
+    error: (text) => {
+      const el = document.createElement('div');
+      el.className = 'terminal-line terminal-error';
+      el.textContent = text;
+      root.insertBefore(el, promptLine);
+    },
+    block: (lines) => {
+      for (const l of lines) {
+        const el = document.createElement('div');
+        el.className = 'terminal-line';
+        el.textContent = l;
+        root.insertBefore(el, promptLine);
+      }
+    },
+    clear: () => {
+      while (root.firstChild && root.firstChild !== promptLine) {
+        root.removeChild(root.firstChild);
+      }
+    },
+  };
+
   // Run a single command line.
   const run = async (line: string) => {
     // Echo the entered line with the prompt above, as a history-style trace.
@@ -83,7 +125,7 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
     const [name, ...args] = trimmed.split(/\s+/);
     const cmd = registry[name!];
     if (!cmd) {
-      output.error(`${name}: command not found`);
+      commandOut.error(`${name}: command not found`);
       return;
     }
 
@@ -92,46 +134,13 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
         fs,
         args,
         raw: trimmed,
-        out: {
-          line: (text) => {
-            const el = document.createElement('div');
-            el.className = 'terminal-line';
-            el.textContent = text ?? '';
-            root.insertBefore(el, promptLine);
-            if (!isSelecting()) window.scrollTo(0, document.body.scrollHeight);
-          },
-          dim: (text) => {
-            const el = document.createElement('div');
-            el.className = 'terminal-line terminal-dim';
-            el.textContent = text;
-            root.insertBefore(el, promptLine);
-          },
-          error: (text) => {
-            const el = document.createElement('div');
-            el.className = 'terminal-line terminal-error';
-            el.textContent = text;
-            root.insertBefore(el, promptLine);
-          },
-          block: (lines) => {
-            for (const l of lines) {
-              const el = document.createElement('div');
-              el.className = 'terminal-line';
-              el.textContent = l;
-              root.insertBefore(el, promptLine);
-            }
-          },
-          clear: () => {
-            while (root.firstChild && root.firstChild !== promptLine) {
-              root.removeChild(root.firstChild);
-            }
-          },
-        },
+        out: commandOut,
         theme,
         history,
         manifest,
       });
     } catch (err) {
-      output.error(err instanceof Error ? err.message : String(err));
+      commandOut.error(err instanceof Error ? err.message : String(err));
     }
 
     updatePrompt();
