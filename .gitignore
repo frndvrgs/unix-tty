@@ -3,4 +3,5 @@ dist
 .astro
 .DS_Store
 *.log
-demo/public/fs.json
+example/public/fs.json
+docs/plans
