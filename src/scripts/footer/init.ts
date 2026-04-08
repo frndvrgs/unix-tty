@@ -54,21 +54,22 @@ function exitToTerminal(): void {
 
 /**
  * Keep --reader-bottom-padding in sync with the actual footer height so
- * the article never hides behind the footer. The footer wraps buttons
- * on narrow viewports, so its height changes with resize and orientation
- * — a ResizeObserver catches all of that plus font/wrap reflows.
+ * the article never hides behind the footer. The CSS rule that consumes
+ * this variable adds the 2rem base breathing room on top via calc(), so
+ * this function writes ONLY the raw footer height in pixels — no
+ * hardcoded breathing room here.
  *
- * We add 32px of breathing room on top of the measured height, matching
- * the 2rem base padding used on the other three sides.
+ * The footer wraps buttons on narrow viewports, so its height changes
+ * with resize and orientation — a ResizeObserver catches all of that
+ * plus font/wrap reflows.
  */
 function watchFooterHeight(): void {
   const footer = document.querySelector<HTMLElement>('.app-footer');
   if (!footer) return;
 
-  const BREATHING_ROOM = 32;
   const update = () => {
     const h = footer.getBoundingClientRect().height;
-    document.body.style.setProperty('--reader-bottom-padding', `${h + BREATHING_ROOM}px`);
+    document.body.style.setProperty('--reader-bottom-padding', `${h}px`);
   };
 
   update();

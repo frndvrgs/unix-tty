@@ -1,10 +1,12 @@
 .reader {
-  /* 2rem base padding on top and sides. Bottom padding is driven by
-   * --reader-bottom-padding, which init.ts writes from the live footer
-   * height (observed via ResizeObserver) plus a 2rem breathing room.
-   * Fallback is 2rem for the brief moment before the script runs. */
+  /* 2rem base padding on all four sides. The bottom gets an extra
+   * --reader-bottom-padding (the live footer height, written by
+   * init.ts via ResizeObserver) added on top, so the article always
+   * clears the footer without losing the 2rem breathing room that the
+   * other sides have. Fallback is 0px so the pre-JS paint still has
+   * the base 2rem from the padding shorthand. */
   padding: 2rem;
-  padding-bottom: var(--reader-bottom-padding, 2rem);
+  padding-bottom: calc(var(--reader-bottom-padding, 0px) + 2rem);
   display: flex;
   justify-content: center;
 }
@@ -22,12 +24,17 @@
   font-size: var(--reader-font-scale, 100%);
 }
 
-/* The very first element in the article has no room to "breathe up" — it
- * sits flush against the article's top padding. Null every top-spacing
- * property so an h1, p, or pre at the start aligns cleanly. */
+/* The very first and very last elements of the article sit flush against
+ * the article's top/bottom padding — nothing to "breathe" toward on the
+ * outside. Null every edge-spacing property so h1/p/pre at the extremes
+ * align cleanly with the reader's padding. */
 .reader article > :first-child {
   margin-top: 0;
   padding-top: 0;
+}
+.reader article > :last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .reader article h1,
