@@ -1,11 +1,24 @@
 ---
-// Placeholder — real reader page in Task 16.
+import { getCollection, render } from 'astro:content';
+import ReaderLayout from '../../layouts/ReaderLayout.astro';
+import config from 'virtual:unix-tty/config';
+
 export async function getStaticPaths() {
-  return [];
+  const entries = await getCollection('docs');
+  return entries.map((entry) => {
+    const segments = entry.id.split('/');
+    const slug = segments[segments.length - 1];
+    return { params: { slug }, props: { entry } };
+  });
 }
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
 ---
-<!doctype html>
-<html>
-  <head><title>reader</title></head>
-  <body>reader placeholder</body>
-</html>
+<ReaderLayout title={entry.data.title} theme={config.reader.theme}>
+  <main>
+    <article>
+      <Content />
+    </article>
+  </main>
+</ReaderLayout>
