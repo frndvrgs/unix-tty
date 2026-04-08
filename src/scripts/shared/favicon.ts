@@ -14,12 +14,19 @@ export function refreshFavicon(theme: ThemeName): void {
   ctx.fillStyle = colors.bg;
   ctx.fillRect(0, 0, size, size);
 
-  const px = size / FAVICON_X.length;
+  // Padded scaling: leave one pixel-cell of margin on each side, matching
+  // the original 0x0064 favicon. `+2` is the per-side margin in cells.
+  const rows = FAVICON_X.length;
+  const cols = FAVICON_X[0]!.length;
+  const px = Math.floor(size / (Math.max(cols, rows) + 2));
+  const offX = Math.floor((size - cols * px) / 2);
+  const offY = Math.floor((size - rows * px) / 2);
+
   ctx.fillStyle = colors.fg;
-  for (let y = 0; y < FAVICON_X.length; y++) {
+  for (let y = 0; y < rows; y++) {
     const row = FAVICON_X[y]!;
-    for (let x = 0; x < row.length; x++) {
-      if (row[x]) ctx.fillRect(x * px, y * px, px, px);
+    for (let x = 0; x < cols; x++) {
+      if (row[x]) ctx.fillRect(offX + x * px, offY + y * px, px, px);
     }
   }
 
