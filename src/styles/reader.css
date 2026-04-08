@@ -46,6 +46,39 @@
   padding: 0;
 }
 
+/*
+ * Multi-theme Shiki: shikiThemes ships ember/phosphor/neutral, each emitting
+ * --shiki-<name>, --shiki-<name>-bg, --shiki-<name>-font-style,
+ * --shiki-<name>-font-weight, --shiki-<name>-text-decoration on every token
+ * span. The active theme class on <html> selects which set to apply.
+ */
+.theme-ember .reader pre.astro-code,
+.theme-ember .reader pre.astro-code span {
+  color: var(--shiki-ember);
+  background-color: var(--shiki-ember-bg);
+  font-style: var(--shiki-ember-font-style);
+  font-weight: var(--shiki-ember-font-weight);
+  text-decoration: var(--shiki-ember-text-decoration);
+}
+
+.theme-phosphor .reader pre.astro-code,
+.theme-phosphor .reader pre.astro-code span {
+  color: var(--shiki-phosphor);
+  background-color: var(--shiki-phosphor-bg);
+  font-style: var(--shiki-phosphor-font-style);
+  font-weight: var(--shiki-phosphor-font-weight);
+  text-decoration: var(--shiki-phosphor-text-decoration);
+}
+
+.theme-neutral .reader pre.astro-code,
+.theme-neutral .reader pre.astro-code span {
+  color: var(--shiki-neutral);
+  background-color: var(--shiki-neutral-bg);
+  font-style: var(--shiki-neutral-font-style);
+  font-weight: var(--shiki-neutral-font-weight);
+  text-decoration: var(--shiki-neutral-text-decoration);
+}
+
 .reader-close {
   position: fixed;
   top: 1rem;
