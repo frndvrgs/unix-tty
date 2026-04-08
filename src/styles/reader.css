@@ -7,7 +7,7 @@
 
 .reader main {
   width: 100%;
-  max-width: 72ch;
+  max-width: 768px;
 }
 
 .reader article {
