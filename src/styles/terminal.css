@@ -1,6 +1,10 @@
 .terminal {
   min-height: 100vh;
-  padding: 1rem;
+  /* 1.6rem = 17.6px at the 11px base, which exactly matches the
+   * line-height of a single .terminal-line (11px * 1.6). Every edge
+   * of the terminal then has the same vertical rhythm as the lines
+   * themselves — pixel-perfect spacing on all four sides. */
+  padding: 1.6rem;
   box-sizing: border-box;
   color: var(--fg);
   background: var(--bg);
