@@ -1,0 +1,33 @@
+{
+  "name": "unix-tty",
+  "type": "module",
+  "version": "0.1.0-dev",
+  "description": "Unix terminal-style website builder as an Astro integration",
+  "repository": "github:frndvrgs/unix-tty",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "cd demo && astro dev",
+    "build": "cd demo && astro build",
+    "preview": "cd demo && astro preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./integration": "./src/integration.ts",
+    "./content": "./src/content.ts",
+    "./config": "./src/config.ts"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "astro": "^6.1.5"
+  },
+  "devDependencies": {
+    "astro": "^6.1.5",
+    "typescript": "^5.6.0"
+  }
+}
