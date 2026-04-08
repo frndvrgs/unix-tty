@@ -1,0 +1,66 @@
+.reader {
+  min-height: 100vh;
+  padding: 3rem 2rem 6rem;
+  display: flex;
+  justify-content: center;
+}
+
+.reader main {
+  width: 100%;
+  max-width: 72ch;
+}
+
+.reader article {
+  color: var(--fg);
+}
+
+.reader article h1,
+.reader article h2,
+.reader article h3 {
+  color: var(--fg);
+  border-bottom: 1px solid var(--dim);
+  padding-bottom: 0.3em;
+  margin-top: 2em;
+}
+
+.reader article a {
+  color: var(--fg);
+  text-decoration: underline;
+}
+
+.reader article code {
+  color: var(--fg);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.1em 0.3em;
+  border-radius: 2px;
+}
+
+.reader article pre {
+  padding: 1rem;
+  border: 1px solid var(--dim);
+  overflow-x: auto;
+}
+
+.reader article pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.reader-close {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  color: var(--fg);
+  text-decoration: none;
+  font-size: 1.5em;
+}
+
+.reader-close:hover {
+  opacity: 0.7;
+}
+
+/* Scrollbar styling to match theme */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
