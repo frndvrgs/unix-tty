@@ -22,6 +22,8 @@
 .terminal-logo {
   display: block;
   margin: 1rem 0;
+  max-height: 88px;
+  width: auto;
   image-rendering: pixelated;
 }
 

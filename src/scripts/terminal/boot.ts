@@ -16,7 +16,23 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
   const manifest: FsManifest = await response.json();
 
   const output = createOutput(root, document.scrollingElement as HTMLElement ?? document.documentElement);
-  const theme = createTheme(manifest.site.defaultTheme);
+
+  // Optional themed logo above the motd. When the config provides a
+  // URL map, we create an <img> and hand it (along with the URLs) to
+  // the theme controller, which keeps the src in sync with the active
+  // theme on every `colors` cycle.
+  let logoElement: HTMLImageElement | undefined;
+  if (config.terminal.logo) {
+    logoElement = document.createElement('img');
+    logoElement.className = 'terminal-logo';
+    logoElement.alt = manifest.site.hostname;
+    root.appendChild(logoElement);
+  }
+
+  const theme = createTheme(manifest.site.defaultTheme, {
+    logoElement,
+    logoUrls: config.terminal.logo,
+  });
   const fs = createFs(manifest, manifest.site.home);
   const history = createHistory();
   const registry = buildRegistry();
@@ -166,5 +182,4 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
   });
 
   input.focus();
-  void config; // config currently unused at runtime — manifest carries what's needed
 }
