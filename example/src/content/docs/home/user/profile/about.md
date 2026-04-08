@@ -16,4 +16,4 @@ const greeting: string = 'hello, world';
 console.log(greeting);
 ```
 
-Press **x** or **Escape** to return to the terminal.
+Press **q** or **Escape** to return to the terminal.

@@ -2,7 +2,7 @@
 // Shared footer for terminal-app pages (reader, and any future page that
 // wants the same chrome). Renders a desktop hint string and a mobile
 // button row, and mounts an init script that wires keyboard shortcuts
-// (+, -, ArrowUp, ArrowDown, c, x, Escape) and button clicks to font
+// (+, -, ArrowUp, ArrowDown, c, q, Escape) and button clicks to font
 // scaling, scrolling, theme cycling, and exit-to-terminal.
 //
 // Font scaling mutates a single CSS variable (--reader-font-scale) on
@@ -10,7 +10,7 @@
 // px units everywhere so it cannot move when the article scales.
 ---
 <footer class="app-footer">
-  <span class="app-footer-desktop">+, - : font size <span data-footer-fontsize>100%</span> | UP, DOWN: scroll | c: switch colors | x: exit to terminal</span>
+  <span class="app-footer-desktop">+, - : font size <span data-footer-fontsize>100%</span> | UP, DOWN: scroll | c: switch colors | q: exit to terminal</span>
   <span class="app-footer-mobile">
     <button type="button" data-footer-action="font-inc" aria-label="increase font size">+</button>
     <button type="button" data-footer-action="font-dec" aria-label="decrease font size">−</button>

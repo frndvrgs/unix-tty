@@ -85,7 +85,7 @@ export function initAppFooter(): void {
     } else if (event.key === 'c' || event.key === 'C') {
       event.preventDefault();
       cycleTheme();
-    } else if (event.key === 'x' || event.key === 'X' || event.key === 'Escape') {
+    } else if (event.key === 'q' || event.key === 'Q' || event.key === 'Escape') {
       event.preventDefault();
       exitToTerminal();
     }
