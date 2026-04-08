@@ -1,0 +1,84 @@
+---
+// Shared footer for terminal-app pages (reader, and any future page that
+// wants the same chrome). Renders a desktop hint string and a mobile
+// button row, and mounts an init script that wires keyboard shortcuts
+// (+, -, ArrowUp, ArrowDown, q, Escape) and button clicks to font sizing,
+// scrolling, and exit-to-terminal.
+---
+<footer class="app-footer">
+  <span class="app-footer-desktop">+, - : increase font size | UP, DOWN: scroll | q: exit to terminal</span>
+  <span class="app-footer-mobile">
+    <button type="button" data-footer-action="font-inc" aria-label="increase font size">+</button>
+    <button type="button" data-footer-action="font-dec" aria-label="decrease font size">−</button>
+    <span class="app-footer-label">font size</span>
+    <span class="app-footer-divider">|</span>
+    <button type="button" data-footer-action="exit" aria-label="exit to terminal">exit to terminal</button>
+  </span>
+</footer>
+
+<style is:global>
+  .app-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.75rem 1rem;
+    background: var(--bg);
+    border-top: 1px solid var(--dim);
+    color: var(--fg);
+    /* Slightly bigger than the regular 11px terminal font. */
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: left;
+    z-index: 100;
+  }
+
+  .app-footer-mobile {
+    display: none;
+  }
+
+  @media (max-width: 600px) {
+    .app-footer-desktop {
+      display: none;
+    }
+    .app-footer-mobile {
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  .app-footer-mobile button {
+    background: transparent;
+    border: 1px solid var(--fg);
+    border-radius: 0;
+    color: var(--fg);
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1;
+    padding: 0.3rem 0.6rem;
+    cursor: pointer;
+  }
+
+  .app-footer-mobile button:hover,
+  .app-footer-mobile button:active,
+  .app-footer-mobile button:focus-visible {
+    background: var(--fg);
+    color: var(--bg);
+    outline: none;
+  }
+
+  .app-footer-divider {
+    opacity: 0.5;
+  }
+
+  .app-footer-label {
+    color: var(--fg);
+  }
+</style>
+
+<script>
+  import { initAppFooter } from 'unix-tty/src/scripts/footer/init.ts';
+  initAppFooter();
+</script>

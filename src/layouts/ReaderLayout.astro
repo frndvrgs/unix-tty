@@ -2,6 +2,7 @@
 import '../styles/themes.css';
 import '../styles/font.css';
 import '../styles/reader.css';
+import AppFooter from '../components/AppFooter.astro';
 import type { ThemeName } from '../config.js';
 
 interface Props {
@@ -21,10 +22,6 @@ const { title, theme } = Astro.props;
   <body class="reader">
     <a class="reader-close" href="/" aria-label="close">×</a>
     <slot />
-    <script>
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') window.location.assign('/');
-      });
-    </script>
+    <AppFooter />
   </body>
 </html>
