@@ -1,0 +1,30 @@
+---
+import '../styles/themes.css';
+import '../styles/font.css';
+import '../styles/reader.css';
+import type { ThemeName } from '../config.js';
+
+interface Props {
+  title: string;
+  theme: ThemeName;
+}
+
+const { title, theme } = Astro.props;
+---
+<!doctype html>
+<html lang="en" class={`theme-${theme}`}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+  </head>
+  <body class="reader">
+    <a class="reader-close" href="/" aria-label="close">×</a>
+    <slot />
+    <script>
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') window.location.assign('/');
+      });
+    </script>
+  </body>
+</html>
