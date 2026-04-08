@@ -1,8 +1,11 @@
 ---
-// Placeholder — real terminal page in Task 21.
+import TerminalLayout from '../layouts/TerminalLayout.astro';
+import config from 'virtual:unix-tty/config';
 ---
-<!doctype html>
-<html>
-  <head><title>unix-tty</title></head>
-  <body>terminal placeholder</body>
-</html>
+<TerminalLayout title={config.site.title} theme={config.terminal.defaultTheme}>
+  <script>
+    import boot from 'unix-tty/src/scripts/terminal/boot.ts';
+    import config from 'virtual:unix-tty/config';
+    void boot(config);
+  </script>
+</TerminalLayout>

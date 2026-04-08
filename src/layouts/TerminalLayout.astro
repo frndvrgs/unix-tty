@@ -1,0 +1,25 @@
+---
+import '../styles/themes.css';
+import '../styles/font.css';
+import '../styles/terminal.css';
+import type { ThemeName } from '../config.js';
+
+interface Props {
+  title: string;
+  theme: ThemeName;
+}
+
+const { title, theme } = Astro.props;
+---
+<!doctype html>
+<html lang="en" class={`theme-${theme}`}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <div id="terminal" class="terminal"></div>
+    <slot />
+  </body>
+</html>
