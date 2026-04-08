@@ -12,7 +12,7 @@ export interface FsManifest {
     buildDate: string;
   };
   dirs: Record<string, { children: string[] }>;
-  files: Record<string, { slug: string; title: string }>;
+  files: Record<string, { slug: string; title: string; size: number }>;
 }
 
 export interface BuildFsManifestInput {
@@ -39,7 +39,7 @@ export async function buildFsManifest(
   const entries = await getCollection('docs');
 
   const dirs: Record<string, { children: string[] }> = {};
-  const files: Record<string, { slug: string; title: string }> = {};
+  const files: Record<string, { slug: string; title: string; size: number }> = {};
   const seenSlugs = new Map<string, string>();
 
   const addDir = (path: string) => {
@@ -79,7 +79,15 @@ export async function buildFsManifest(
 
     // Register the file itself.
     addChild(parent || '/', basename + '.md');
-    files[virtualPath] = { slug, title: entry.data.title };
+    // Byte size of the raw markdown source. The content layer exposes the
+    // body string on every entry; UTF-8 byte length matches char count for
+    // ASCII and is "close enough" for unicode-heavy docs.
+    const body = (entry as { body?: string }).body ?? '';
+    files[virtualPath] = {
+      slug,
+      title: entry.data.title,
+      size: new TextEncoder().encode(body).length,
+    };
   }
 
   // Sort directory children for stable output.

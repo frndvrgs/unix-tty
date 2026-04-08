@@ -11,7 +11,7 @@ export interface FsManifest {
     buildDate: string;
   };
   dirs: Record<string, { children: string[] }>;
-  files: Record<string, { slug: string; title: string }>;
+  files: Record<string, { slug: string; title: string; size: number }>;
 }
 
 export interface OutputSink {
@@ -43,7 +43,7 @@ export interface VirtualFs {
   list(path: string): string[] | null;
   isDir(path: string): boolean;
   isFile(path: string): boolean;
-  entry(path: string): { slug: string; title: string } | null;
+  entry(path: string): { slug: string; title: string; size: number } | null;
   readFile(path: string): Promise<string>;
   allPaths(): string[];
 }
