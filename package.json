@@ -1,7 +1,7 @@
 {
   "name": "unix-tty",
   "type": "module",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Unix terminal-style website builder as an Astro integration",
   "repository": "github:frndvrgs/unix-tty",
   "license": "MIT",

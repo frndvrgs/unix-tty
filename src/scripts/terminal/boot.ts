@@ -38,7 +38,13 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
   const registry = buildRegistry();
   const names = commandNames(registry);
 
-  // Motd
+  // Motd. If a logo is rendered above, prepend a blank line so the
+  // motd has consistent breathing room from the logo regardless of
+  // future line-height changes. The trailing blank line matches on
+  // the other side so the motd is always wrapped in empty lines.
+  if (logoElement) {
+    output.dim('');
+  }
   for (const raw of manifest.site.motd) {
     const text = raw
       .replace('{version}', manifest.site.unixVersion)
@@ -68,39 +74,46 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
   };
   updatePrompt();
 
+  // Single helper for any DOM insertion that lands above the prompt.
+  // Handles both the insertBefore and the scroll-to-bottom so every
+  // code path — echo line, command output, command errors, tab
+  // completion candidates — behaves the same way. isSelecting() guards
+  // against stealing a user's active text selection.
+  const appendAbovePrompt = (el: HTMLElement) => {
+    root.insertBefore(el, promptLine);
+    if (!isSelecting()) window.scrollTo(0, document.body.scrollHeight);
+  };
+
   // The output sink used for everything printed AFTER the prompt line
-  // exists. It inserts before promptLine so the prompt always stays at
-  // the bottom and clear() only wipes the lines above it (leaving the
-  // prompt intact). Every command uses this sink, and so do the
-  // "command not found" and catch-branch errors in run() below — using
-  // the append-only `output` created earlier would cause those errors
-  // to pile up under the prompt and survive clear().
+  // exists. Every command uses this sink, and so do the "command not
+  // found" and catch-branch errors in run() below — using the
+  // append-only `output` created earlier would cause those errors to
+  // pile up under the prompt and survive clear().
   const commandOut: OutputSink = {
     line: (text) => {
       const el = document.createElement('div');
       el.className = 'terminal-line';
       el.textContent = text ?? '';
-      root.insertBefore(el, promptLine);
-      if (!isSelecting()) window.scrollTo(0, document.body.scrollHeight);
+      appendAbovePrompt(el);
     },
     dim: (text) => {
       const el = document.createElement('div');
       el.className = 'terminal-line terminal-dim';
       el.textContent = text;
-      root.insertBefore(el, promptLine);
+      appendAbovePrompt(el);
     },
     error: (text) => {
       const el = document.createElement('div');
       el.className = 'terminal-line terminal-error';
       el.textContent = text;
-      root.insertBefore(el, promptLine);
+      appendAbovePrompt(el);
     },
     block: (lines) => {
       for (const l of lines) {
         const el = document.createElement('div');
         el.className = 'terminal-line';
         el.textContent = l;
-        root.insertBefore(el, promptLine);
+        appendAbovePrompt(el);
       }
     },
     clear: () => {
@@ -116,7 +129,7 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
     const echoEl = document.createElement('div');
     echoEl.className = 'terminal-line';
     echoEl.textContent = `${promptSpan.textContent}${line}`;
-    root.insertBefore(echoEl, promptLine);
+    appendAbovePrompt(echoEl);
 
     const trimmed = line.trim();
     if (!trimmed) return;
@@ -175,11 +188,11 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
         const echo = document.createElement('div');
         echo.className = 'terminal-line';
         echo.textContent = `${promptSpan.textContent}${input.value}`;
-        root.insertBefore(echo, promptLine);
+        appendAbovePrompt(echo);
         const list = document.createElement('div');
         list.className = 'terminal-line';
         list.textContent = result.candidates.join('  ');
-        root.insertBefore(list, promptLine);
+        appendAbovePrompt(list);
       }
       return;
     }
