@@ -2,31 +2,40 @@
 // Shared footer for terminal-app pages (reader, and any future page that
 // wants the same chrome). Renders a desktop hint string and a mobile
 // button row, and mounts an init script that wires keyboard shortcuts
-// (+, -, ArrowUp, ArrowDown, q, Escape) and button clicks to font sizing,
-// scrolling, and exit-to-terminal.
+// (+, -, ArrowUp, ArrowDown, c, x, Escape) and button clicks to font
+// scaling, scrolling, theme cycling, and exit-to-terminal.
+//
+// Font scaling mutates a single CSS variable (--reader-font-scale) on
+// body.reader; only the article reflows. The footer itself uses absolute
+// px units everywhere so it cannot move when the article scales.
 ---
 <footer class="app-footer">
-  <span class="app-footer-desktop">+, - : increase font size | UP, DOWN: scroll | q: exit to terminal</span>
+  <span class="app-footer-desktop">+, - : font size <span data-footer-fontsize>100%</span> | UP, DOWN: scroll | c: switch colors | x: exit to terminal</span>
   <span class="app-footer-mobile">
     <button type="button" data-footer-action="font-inc" aria-label="increase font size">+</button>
     <button type="button" data-footer-action="font-dec" aria-label="decrease font size">−</button>
-    <span class="app-footer-label">font size</span>
+    <span class="app-footer-label">font size <span data-footer-fontsize>100%</span></span>
     <span class="app-footer-divider">|</span>
+    <button type="button" data-footer-action="colors" aria-label="switch colors">colors</button>
     <button type="button" data-footer-action="exit" aria-label="exit to terminal">exit to terminal</button>
   </span>
 </footer>
 
 <style is:global>
+  /*
+   * Footer is fixed at the bottom of the viewport. Every dimension here
+   * uses absolute units so the footer's geometry is immune to changes in
+   * the article's font scale (--reader-font-scale).
+   */
   .app-footer {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 0.75rem 1rem;
+    padding: 12px 16px;
     background: var(--bg);
     border-top: 1px solid var(--dim);
     color: var(--fg);
-    /* Slightly bigger than the regular 11px terminal font. */
     font-size: 13px;
     line-height: 1.4;
     text-align: left;
@@ -45,7 +54,7 @@
       display: inline-flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 0.5rem;
+      gap: 8px;
     }
   }
 
@@ -55,9 +64,9 @@
     border-radius: 0;
     color: var(--fg);
     font-family: inherit;
-    font-size: inherit;
+    font-size: 13px;
     line-height: 1;
-    padding: 0.3rem 0.6rem;
+    padding: 5px 10px;
     cursor: pointer;
   }
 

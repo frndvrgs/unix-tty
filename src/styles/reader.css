@@ -1,6 +1,8 @@
 .reader {
-  min-height: 100vh;
-  padding: 3rem 2rem 6rem;
+  /* Consistent padding on all four sides — nothing reserved for the footer.
+   * Article scrolls behind the footer at the very bottom for long docs;
+   * short docs sit naturally above it. */
+  padding: 2rem;
   display: flex;
   justify-content: center;
 }
@@ -12,6 +14,10 @@
 
 .reader article {
   color: var(--fg);
+  /* The footer's font-scale buttons mutate this variable on body.reader.
+   * Only the article and its descendants reflow when font scale changes —
+   * everything outside (footer, layout) uses absolute units and stays put. */
+  font-size: var(--reader-font-scale, 100%);
 }
 
 .reader article h1,
@@ -77,19 +83,6 @@
   font-style: var(--shiki-neutral-font-style);
   font-weight: var(--shiki-neutral-font-weight);
   text-decoration: var(--shiki-neutral-text-decoration);
-}
-
-.reader-close {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  color: var(--fg);
-  text-decoration: none;
-  font-size: 1.5em;
-}
-
-.reader-close:hover {
-  opacity: 0.7;
 }
 
 /* Scrollbar styling to match theme */

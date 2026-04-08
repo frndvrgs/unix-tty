@@ -92,10 +92,24 @@ const ls: Command = {
       rows.push(buildRow(fs, path, c, decorate(c)));
     }
 
-    const sizeWidth = Math.max(...rows.map((r) => String(r.size).length));
     const nlinkWidth = Math.max(...rows.map((r) => String(r.nlink).length));
     const owner = manifest.site.user;
     const group = manifest.site.user;
+
+    // On narrow viewports drop the size and date columns — they push the
+    // line over a phone's character width and force ugly wrapping.
+    const isMobile =
+      typeof window !== 'undefined' && window.matchMedia('(max-width: 600px)').matches;
+
+    if (isMobile) {
+      for (const r of rows) {
+        const nlink = String(r.nlink).padStart(nlinkWidth, ' ');
+        out.line(`${r.mode}  ${nlink} ${owner} ${group}  ${r.name}`);
+      }
+      return;
+    }
+
+    const sizeWidth = Math.max(...rows.map((r) => String(r.size).length));
     // Single timestamp for the whole listing — we don't track per-file mtime
     // in v0.1, so we use the build date.
     const mtime = fmtDate(new Date(manifest.site.buildDate));
