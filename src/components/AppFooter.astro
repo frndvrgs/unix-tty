@@ -5,20 +5,30 @@
 // (+, -, ArrowUp, ArrowDown, c, q, Escape) and button clicks to font
 // scaling, scrolling, theme cycling, and exit-to-terminal.
 //
+// Layout: both variants use `justify-content: space-between` so the
+// scroll/colors/exit commands sit on the left and the font-size
+// controls sit on the right end.
+//
 // Font scaling mutates a single CSS variable (--reader-font-scale) on
 // body.reader; only the article reflows. The footer itself uses absolute
 // px units everywhere so it cannot move when the article scales.
 ---
 <footer class="app-footer">
-  <span class="app-footer-desktop">+, - : font size <span data-footer-fontsize>100%</span> | UP, DOWN: scroll | c: switch colors | q: exit to terminal</span>
-  <span class="app-footer-mobile">
-    <button type="button" data-footer-action="font-inc" aria-label="increase font size">+</button>
-    <button type="button" data-footer-action="font-dec" aria-label="decrease font size">−</button>
-    <span class="app-footer-label">font size <span data-footer-fontsize>100%</span></span>
-    <span class="app-footer-divider">|</span>
-    <button type="button" data-footer-action="colors" aria-label="switch colors">colors</button>
-    <button type="button" data-footer-action="exit" aria-label="exit to terminal">exit to terminal</button>
-  </span>
+  <div class="app-footer-desktop">
+    <span>UP, DOWN: scroll | c: switch colors | q: exit to terminal</span>
+    <span>+, - <span data-footer-fontsize>100%</span></span>
+  </div>
+  <div class="app-footer-mobile">
+    <span class="app-footer-group">
+      <button type="button" data-footer-action="colors" aria-label="switch colors">colors</button>
+      <button type="button" data-footer-action="exit" aria-label="exit to terminal">exit to terminal</button>
+    </span>
+    <span class="app-footer-group">
+      <button type="button" data-footer-action="font-inc" aria-label="increase font size">+</button>
+      <button type="button" data-footer-action="font-dec" aria-label="decrease font size">−</button>
+      <span data-footer-fontsize>100%</span>
+    </span>
+  </div>
 </footer>
 
 <style is:global>
@@ -38,12 +48,20 @@
     color: var(--fg);
     font-size: 13px;
     line-height: 1.4;
-    text-align: left;
     z-index: 100;
   }
 
+  .app-footer-desktop,
   .app-footer-mobile {
     display: none;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .app-footer-desktop {
+    display: flex;
   }
 
   @media (max-width: 600px) {
@@ -51,11 +69,15 @@
       display: none;
     }
     .app-footer-mobile {
-      display: inline-flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
+      display: flex;
     }
+  }
+
+  .app-footer-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
   }
 
   .app-footer-mobile button {
@@ -76,14 +98,6 @@
     background: var(--fg);
     color: var(--bg);
     outline: none;
-  }
-
-  .app-footer-divider {
-    opacity: 0.5;
-  }
-
-  .app-footer-label {
-    color: var(--fg);
   }
 </style>
 

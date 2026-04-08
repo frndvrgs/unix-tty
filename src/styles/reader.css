@@ -1,8 +1,10 @@
 .reader {
-  /* Consistent padding on all four sides — nothing reserved for the footer.
-   * Article scrolls behind the footer at the very bottom for long docs;
-   * short docs sit naturally above it. */
+  /* 2rem base padding on top and sides. Bottom padding is driven by
+   * --reader-bottom-padding, which init.ts writes from the live footer
+   * height (observed via ResizeObserver) plus a 2rem breathing room.
+   * Fallback is 2rem for the brief moment before the script runs. */
   padding: 2rem;
+  padding-bottom: var(--reader-bottom-padding, 2rem);
   display: flex;
   justify-content: center;
 }
@@ -18,6 +20,14 @@
    * Only the article and its descendants reflow when font scale changes —
    * everything outside (footer, layout) uses absolute units and stays put. */
   font-size: var(--reader-font-scale, 100%);
+}
+
+/* The very first element in the article has no room to "breathe up" — it
+ * sits flush against the article's top padding. Null every top-spacing
+ * property so an h1, p, or pre at the start aligns cleanly. */
+.reader article > :first-child {
+  margin-top: 0;
+  padding-top: 0;
 }
 
 .reader article h1,

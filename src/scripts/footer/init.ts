@@ -52,9 +52,38 @@ function exitToTerminal(): void {
   window.location.assign('/');
 }
 
+/**
+ * Keep --reader-bottom-padding in sync with the actual footer height so
+ * the article never hides behind the footer. The footer wraps buttons
+ * on narrow viewports, so its height changes with resize and orientation
+ * — a ResizeObserver catches all of that plus font/wrap reflows.
+ *
+ * We add 32px of breathing room on top of the measured height, matching
+ * the 2rem base padding used on the other three sides.
+ */
+function watchFooterHeight(): void {
+  const footer = document.querySelector<HTMLElement>('.app-footer');
+  if (!footer) return;
+
+  const BREATHING_ROOM = 32;
+  const update = () => {
+    const h = footer.getBoundingClientRect().height;
+    document.body.style.setProperty('--reader-bottom-padding', `${h + BREATHING_ROOM}px`);
+  };
+
+  update();
+
+  if (typeof ResizeObserver !== 'undefined') {
+    const ro = new ResizeObserver(update);
+    ro.observe(footer);
+  }
+  window.addEventListener('resize', update);
+}
+
 export function initAppFooter(): void {
   // Prime the font-scale display so it shows 100% on first paint.
   applyFontScale();
+  watchFooterHeight();
 
   document.addEventListener('keydown', (event) => {
     // Skip when typing in an input/textarea/contenteditable. This lets a
