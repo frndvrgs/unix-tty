@@ -1,0 +1,31 @@
+:root {
+  --fg: #ffa133;
+  --bg: #222222;
+  --dim: #7a5a2a;
+}
+
+.theme-ember {
+  --fg: #ffa133;
+  --bg: #222222;
+  --dim: #7a5a2a;
+}
+
+.theme-phosphor {
+  --fg: #39d353;
+  --bg: #0d1117;
+  --dim: #1b6928;
+}
+
+.theme-neutral {
+  --fg: #ffffff;
+  --bg: #000000;
+  --dim: #555555;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+}
