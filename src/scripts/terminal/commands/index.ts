@@ -1,4 +1,5 @@
 import type { Command } from '../types.js';
+import about from './about.js';
 import cat from './cat.js';
 import cd from './cd.js';
 import clear from './clear.js';
@@ -12,7 +13,7 @@ import read from './read.js';
 import uname from './uname.js';
 import whoami from './whoami.js';
 
-const base: Command[] = [ls, cd, cat, read, pwd, clear, whoami, uname, dateCmd, echo, historyCmd, colors];
+const base: Command[] = [ls, cd, cat, read, pwd, clear, whoami, uname, dateCmd, echo, historyCmd, colors, about];
 
 export function buildRegistry(): Record<string, Command> {
   const registry: Record<string, Command> = {};

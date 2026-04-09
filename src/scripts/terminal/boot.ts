@@ -1,4 +1,5 @@
 import type { UnixTtyConfig } from '../../config.js';
+import { hapticError, hapticSuccess } from '../shared/haptics.js';
 import { buildRegistry, commandNames } from './commands/index.js';
 import { createFs } from './fs.js';
 import { createHistory } from './history.js';
@@ -69,6 +70,12 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
     if (!isSelecting()) root.scrollTop = root.scrollHeight;
   };
 
+  // Flipped to true by commandOut.error below so run() knows which
+  // haptic to fire after a command finishes. Commands execute serially
+  // (each Enter awaits the previous run), so a single shared flag is
+  // safe — there's never more than one in-flight run at a time.
+  let errorDuringRun = false;
+
   const commandOut: OutputSink = {
     line: (text) => {
       const el = document.createElement('div');
@@ -86,6 +93,7 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
       appendAbovePrompt(el);
     },
     error: (text) => {
+      errorDuringRun = true;
       const el = document.createElement('div');
       el.className = 'terminal-line terminal-error';
       el.textContent = text;
@@ -113,28 +121,40 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
     appendAbovePrompt(echoEl);
 
     const trimmed = line.trim();
+    // Empty input (bare Enter) is a no-op: no history, no haptic.
     if (!trimmed) return;
     history.push(trimmed);
+
+    errorDuringRun = false;
 
     const [name, ...args] = trimmed.split(/\s+/);
     const cmd = registry[name!];
     if (!cmd) {
       commandOut.error(`${name}: command not found`);
-      return;
+    } else {
+      try {
+        await cmd.run({
+          fs,
+          args,
+          raw: trimmed,
+          out: commandOut,
+          theme,
+          history,
+          manifest,
+        });
+      } catch (err) {
+        commandOut.error(err instanceof Error ? err.message : String(err));
+      }
     }
 
-    try {
-      await cmd.run({
-        fs,
-        args,
-        raw: trimmed,
-        out: commandOut,
-        theme,
-        history,
-        manifest,
-      });
-    } catch (err) {
-      commandOut.error(err instanceof Error ? err.message : String(err));
+    // Haptic feedback: success by default, error whenever commandOut.error
+    // was invoked at any point during this run (unknown command, command's
+    // own error output, or a thrown exception caught above). No-op on
+    // devices without vibration support.
+    if (errorDuringRun) {
+      hapticError();
+    } else {
+      hapticSuccess();
     }
 
     updatePrompt();

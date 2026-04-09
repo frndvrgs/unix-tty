@@ -1,5 +1,6 @@
 import type { ThemeName } from '../../config.js';
 import { refreshFavicon } from '../shared/favicon.js';
+import { hapticSuccess } from '../shared/haptics.js';
 import { THEME_NAMES } from '../shared/themes.js';
 
 const FONT_MIN = 50; // percent
@@ -94,6 +95,9 @@ export function initAppFooter(): void {
 
   document.querySelectorAll<HTMLElement>('[data-footer-action]').forEach((btn) => {
     btn.addEventListener('click', () => {
+      // Every button tap fires a success haptic. No-op on devices
+      // without vibration support, so desktop is unaffected.
+      hapticSuccess();
       const action = btn.dataset.footerAction;
       if (action === 'font-inc') adjustFontScale(FONT_STEP);
       else if (action === 'font-dec') adjustFontScale(-FONT_STEP);
