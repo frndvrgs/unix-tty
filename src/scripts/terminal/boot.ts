@@ -3,7 +3,7 @@ import { hapticsCommand, hapticsError, hapticsRun } from '../shared/haptics.js';
 import { buildRegistry, commandNames } from './commands/index.js';
 import { createFs } from './fs.js';
 import { createHistory } from './history.js';
-import { createOutput, isSelecting, renderRichLine } from './output.js';
+import { isSelecting, renderRichLine } from './output.js';
 import { complete } from './tabComplete.js';
 import { createTheme } from './theme.js';
 import type { FsManifest, OutputSink, PostCommandHaptic } from './types.js';
@@ -19,8 +19,6 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
   const ns = `unix-tty:${manifest.site.hostname}`;
   const outputKey = `${ns}:output`;
 
-  const output = createOutput(root, root);
-
   let logoElement: HTMLImageElement | undefined;
   if (config.terminal.logo) {
     logoElement = document.createElement('img');
@@ -33,7 +31,7 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
     logoElement,
     logoUrls: config.terminal.logo,
   });
-  const fs = createFs(manifest, manifest.site.home);
+  const fs = createFs(manifest, manifest.site.home, `${ns}:cwd`);
   const history = createHistory(`${ns}:history`);
   const registry = buildRegistry();
   const names = commandNames(registry);
@@ -48,13 +46,20 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
     }
   } catch {}
 
+  const renderHeader = (text: string) => {
+    const el = document.createElement('div');
+    el.className = 'terminal-line terminal-dim terminal-header';
+    el.textContent = text;
+    root.appendChild(el);
+  };
+
   if (!restored) {
-    if (logoElement) output.dim('');
+    if (logoElement) renderHeader('');
     for (const raw of manifest.site.motd) {
       const text = raw.replace('{version}', manifest.site.unixVersion).replace('{buildDate}', manifest.site.buildDate);
-      output.dim(text);
+      renderHeader(text);
     }
-    output.dim('');
+    renderHeader('');
   }
 
   const promptLine = document.createElement('div');
@@ -140,8 +145,17 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
       }
     },
     clear: () => {
-      while (root.firstChild && root.firstChild !== promptLine) {
-        root.removeChild(root.firstChild);
+      let node = root.firstChild;
+      while (node && node !== promptLine) {
+        const next = node.nextSibling;
+        if (
+          node instanceof HTMLElement &&
+          !node.classList.contains('terminal-logo') &&
+          !node.classList.contains('terminal-header')
+        ) {
+          root.removeChild(node);
+        }
+        node = next;
       }
       try {
         localStorage.removeItem(outputKey);

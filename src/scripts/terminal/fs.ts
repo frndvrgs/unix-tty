@@ -1,8 +1,22 @@
 import type { FsManifest, VirtualFs } from './types.js';
 
-export function createFs(manifest: FsManifest, home: string): VirtualFs {
-  let current = home;
+export function createFs(manifest: FsManifest, home: string, storageKey: string): VirtualFs {
+  const loadCwd = (): string => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved && manifest.dirs[saved]) return saved;
+    } catch {}
+    return home;
+  };
+
+  let current = loadCwd();
   const cache = new Map<string, string>();
+
+  const persistCwd = () => {
+    try {
+      localStorage.setItem(storageKey, current);
+    } catch {}
+  };
 
   const normalise = (parts: string[]): string => {
     const stack: string[] = [];
@@ -42,6 +56,7 @@ export function createFs(manifest: FsManifest, home: string): VirtualFs {
     const target = resolve(path);
     if (!isDir(target)) throw new Error(`cd: not a directory: ${path}`);
     current = target;
+    persistCwd();
   };
 
   const readFile = async (path: string): Promise<string> => {

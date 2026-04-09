@@ -4,4 +4,4 @@ dist
 .DS_Store
 *.log
 example/public/fs.json
-docs
+/docs

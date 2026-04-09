@@ -56,10 +56,6 @@ export function createOutput(root: HTMLElement, scrollHost: HTMLElement): Output
     while (root.firstChild) root.removeChild(root.firstChild);
   };
 
-  // No-op: the motd-time sink doesn't drive post-command haptics.
-  // Only the `commandOut` sink constructed inside boot()'s run()
-  // closure does, because only that sink has access to the shared
-  // hapticKind state.
   const haptic = () => {};
 
   return { line, lineRich, dim, error, block, clear, haptic };

@@ -16,6 +16,7 @@ npm run format       # biome format --write
 
 ## Rules
 
+- Always ask for explicit confirmation before `git push`, `git push --force`, or creating a GitHub release. Commits and tags are fine to create locally, but never push without a direct go-ahead from the user.
 - Bump `UNIX_VERSION` in `src/version.ts` on each release, follow semver.
 - Bump `version` in `package.json` on each release.
 - Do not add comments to explain changes. Keep the code clean.
