@@ -16,13 +16,6 @@ export interface FsManifest {
 
 export type LineSegment = string | { text: string; insert?: string };
 
-/**
- * Post-command haptic kind. Default is 'command' (subtle
- * confirmation); a command can upgrade its run to 'run' via
- * `out.haptic('run')` to signal that it's launching an app-like
- * transition (e.g. the reader page). Error haptics are handled
- * automatically whenever `out.error` is invoked.
- */
 export type PostCommandHaptic = 'command' | 'run';
 
 export interface OutputSink {
@@ -32,11 +25,6 @@ export interface OutputSink {
   error(text: string): void;
   block(lines: string[]): void;
   clear(): void;
-  /**
-   * Signal which haptic run() should fire after this command
-   * completes. No-op on sinks that don't drive post-command
-   * feedback (e.g. the motd-time sink before the prompt exists).
-   */
   haptic(kind: PostCommandHaptic): void;
 }
 

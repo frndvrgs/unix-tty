@@ -1,10 +1,20 @@
 {
   "name": "unix-tty",
   "type": "module",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "Unix terminal-style website builder as an Astro integration",
+  "author": "Fernando Vargas <frndvrgs> (https://frndvrgs.com)",
   "repository": "github:frndvrgs/unix-tty",
+  "homepage": "https://github.com/frndvrgs/unix-tty",
   "license": "MIT",
+  "keywords": [
+    "astro",
+    "terminal",
+    "tty",
+    "unix",
+    "monospace",
+    "static-site"
+  ],
   "engines": {
     "node": ">=22.12.0"
   },
@@ -25,7 +35,8 @@
   },
   "files": [
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "peerDependencies": {
     "astro": "^6.1.5"

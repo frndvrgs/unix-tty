@@ -1,21 +1,16 @@
 # unix-tty
 
-An Astro integration that turns a markdown content collection into a Unix-terminal-style website.
+An Astro integration that renders a Unix terminal-style website from a markdown content collection.
 
 ## Install
 
-Consumer `package.json`:
-
-```json
-"dependencies": {
-  "astro": "^6.1.5",
-  "unix-tty": "github:frndvrgs/unix-tty"
-}
+```sh
+npm install unix-tty astro
 ```
 
-## Use
+## Setup
 
-Consumer `astro.config.mjs`:
+`astro.config.mjs`:
 
 ```js
 import { defineConfig } from 'astro/config';
@@ -27,13 +22,17 @@ export default defineConfig({
 });
 ```
 
-Consumer `site.config.ts`:
+`site.config.ts`:
 
 ```ts
 import { defineConfig } from 'unix-tty/config';
 
 export default defineConfig({
-  site: { title: 'my site', description: '...', url: 'https://example.com' },
+  site: {
+    title: 'my site',
+    description: '...',
+    url: 'https://example.com',
+  },
   terminal: {
     hostname: 'example',
     username: 'user',
@@ -43,39 +42,41 @@ export default defineConfig({
       'unix {version} | tty0 | utf-8',
       "type 'help' for a list of commands",
     ],
+    logo: {
+      ember: '/assets/logo-ember.svg',
+      phosphor: '/assets/logo-phosphor.svg',
+      neutral: '/assets/logo-neutral.svg',
+    },
   },
   reader: { theme: 'ember' },
 });
 ```
 
-Consumer `src/content.config.ts`:
+`src/content.config.ts`:
 
 ```ts
 export { collections } from 'unix-tty/content';
 ```
 
-Then drop markdown into `src/content/docs/home/user/...`. The file tree mirrors the virtual filesystem the terminal walks.
+Drop markdown files with a `title` frontmatter into `src/content/docs/`. The file tree mirrors the virtual filesystem the terminal walks.
 
 ## Routes
 
 - `/` — terminal
-- `/read/<slug>` — reader page (build-time rendered markdown)
-- `/fs.json` — virtual filesystem manifest, fetched by the terminal at runtime
+- `/read/<slug>` — reader (build-time rendered markdown with Shiki syntax highlighting)
+- `/fs.json` — virtual filesystem manifest
 
 ## Commands
 
-`ls`, `cd`, `cat`, `read`, `pwd`, `clear`, `whoami`, `uname`, `date`, `echo`, `history`, `colors`, `help`, `ll`
-
-## Development
-
-```sh
-npm install
-npm run dev     # runs the example site at example/
-```
+`ls`, `cd`, `cat`, `read`, `pwd`, `clear`, `whoami`, `uname`, `date`, `echo`, `history`, `colors`, `help`, `about`, `ll`
 
 ## Themes
 
-`ember`, `phosphor`, `neutral`. Cycled at runtime via the `colors` command.
+`ember`, `phosphor`, `neutral` — cycled at runtime via the `colors` command. Each theme includes matching Shiki syntax highlighting for the reader.
+
+## Font
+
+[Departure Mono](https://departuremono.com) by Helena Zhang — [helenazhang.com](https://helenazhang.com). Licensed under SIL Open Font License 1.1.
 
 ## License
 

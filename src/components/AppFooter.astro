@@ -32,11 +32,6 @@
 </footer>
 
 <style is:global>
-  /*
-   * Footer is fixed at the bottom of the viewport. Every dimension here
-   * uses absolute units so the footer's geometry is immune to changes in
-   * the article's font scale (--reader-font-scale).
-   */
   .app-footer {
     position: fixed;
     bottom: 0;
@@ -65,12 +60,6 @@
   }
 
   @media (max-width: 600px) {
-    /*
-     * Mobile-only padding override — double the default so the
-     * content clears the rounded frame cutouts on phones. Notches
-     * and pill cutouts on modern devices eat into the edges; the
-     * extra room keeps the buttons and text away from the curve.
-     */
     .app-footer {
       padding: 22px 22px 32px 22px;
     }
@@ -101,12 +90,6 @@
     cursor: pointer;
   }
 
-  /*
-   * Hover state is scoped to real pointer devices only. On touch,
-   * browsers otherwise stick :hover on the last-tapped button until
-   * the user taps elsewhere, making the footer look "stuck". Without
-   * this gate, every tap would leave a trailing highlight.
-   */
   @media (hover: hover) {
     .app-footer-mobile button:hover {
       background: var(--fg);
@@ -114,12 +97,6 @@
     }
   }
 
-  /*
-   * Keyboard-focus feedback. :focus-visible only fires on keyboard
-   * navigation (Tab), not on mouse click or touch tap, so it gives
-   * keyboard users a clear indicator without introducing the sticky
-   * highlight that full :focus would on mobile.
-   */
   .app-footer-mobile button:focus-visible,
   .app-footer-mobile button:active {
     background: var(--fg);
