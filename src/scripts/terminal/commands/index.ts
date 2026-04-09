@@ -12,26 +12,12 @@ import read from './read.js';
 import uname from './uname.js';
 import whoami from './whoami.js';
 
-const base: Command[] = [
-  ls,
-  cd,
-  cat,
-  read,
-  pwd,
-  clear,
-  whoami,
-  uname,
-  dateCmd,
-  echo,
-  historyCmd,
-  colors,
-];
+const base: Command[] = [ls, cd, cat, read, pwd, clear, whoami, uname, dateCmd, echo, historyCmd, colors];
 
 export function buildRegistry(): Record<string, Command> {
   const registry: Record<string, Command> = {};
   for (const c of base) registry[c.name] = c;
 
-  // help iterates the registry at runtime.
   registry.help = {
     name: 'help',
     summary: 'list available commands',
@@ -46,7 +32,6 @@ export function buildRegistry(): Record<string, Command> {
     },
   };
 
-  // alias: `ll` == `ls -la`
   registry.ll = {
     name: 'll',
     summary: 'alias for ls -la',

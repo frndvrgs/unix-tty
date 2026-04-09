@@ -24,15 +24,13 @@ function commonPrefix(strings: string[]): string {
 }
 
 export function complete({ value, commands, fs }: CompletionInput): CompletionResult {
-  // Completing the command itself (position 0).
   if (!value.includes(' ')) {
     const matches = commands.filter((c) => c.startsWith(value));
     if (matches.length === 0) return { value, candidates: [] };
-    if (matches.length === 1) return { value: matches[0]! + ' ', candidates: [] };
+    if (matches.length === 1) return { value: `${matches[0]!} `, candidates: [] };
     return { value: commonPrefix(matches), candidates: matches };
   }
 
-  // Completing a path argument.
   const lastSpace = value.lastIndexOf(' ');
   const head = value.slice(0, lastSpace + 1);
   const partial = value.slice(lastSpace + 1);

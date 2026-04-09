@@ -23,7 +23,7 @@ function fmtDate(d: Date): string {
 
 function buildRow(fs: VirtualFs, parent: string, name: string, displayName: string): Row {
   const childPath =
-    name === '.' ? parent : name === '..' ? parentOf(parent) : (parent === '/' ? `/${name}` : `${parent}/${name}`);
+    name === '.' ? parent : name === '..' ? parentOf(parent) : parent === '/' ? `/${name}` : `${parent}/${name}`;
 
   if (fs.isDir(childPath)) {
     return { mode: 'drwxr-xr-x', nlink: DIR_NLINK, size: DIR_SIZE, name: displayName };
@@ -67,8 +67,6 @@ const ls: Command = {
       return;
     }
 
-    // Build the visible name list. `-a` prepends `.` and `..`.
-    // Directories get a trailing slash for clarity.
     const decorate = (name: string): string => {
       const childPath = path === '/' ? `/${name}` : `${path}/${name}`;
       return fs.isDir(childPath) ? `${name}/` : name;
@@ -89,7 +87,6 @@ const ls: Command = {
       return;
     }
 
-    // Long format. Build all rows first so we can right-align the size column.
     const rows: Row[] = [];
     if (showHidden) {
       rows.push(buildRow(fs, path, '.', '.'));
@@ -103,10 +100,7 @@ const ls: Command = {
     const owner = manifest.site.user;
     const group = manifest.site.user;
 
-    // On narrow viewports drop the size and date columns — they push the
-    // line over a phone's character width and force ugly wrapping.
-    const isMobile =
-      typeof window !== 'undefined' && window.matchMedia('(max-width: 600px)').matches;
+    const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 600px)').matches;
 
     if (isMobile) {
       for (const r of rows) {
@@ -118,8 +112,6 @@ const ls: Command = {
     }
 
     const sizeWidth = Math.max(...rows.map((r) => String(r.size).length));
-    // Single timestamp for the whole listing — we don't track per-file mtime
-    // in v0.1, so we use the build date.
     const mtime = fmtDate(new Date(manifest.site.buildDate));
 
     for (const r of rows) {

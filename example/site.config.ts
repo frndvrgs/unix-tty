@@ -11,11 +11,7 @@ export default defineConfig({
     username: 'user',
     home: '/home/user',
     defaultTheme: 'ember',
-    motd: [
-      'unix {version} | tty0 | utf-8',
-      'last login: {buildDate}',
-      "type 'help' for a list of commands",
-    ],
+    motd: ['unix {version} | tty0 | utf-8', 'last login: {buildDate}', "type 'help' for a list of commands"],
   },
   reader: {
     theme: 'ember',

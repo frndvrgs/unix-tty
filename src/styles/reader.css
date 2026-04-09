@@ -1,10 +1,4 @@
 .reader {
-  /* 2rem base padding on all four sides. The bottom gets an extra
-   * --reader-bottom-padding (the live footer height, written by
-   * init.ts via ResizeObserver) added on top, so the article always
-   * clears the footer without losing the 2rem breathing room that the
-   * other sides have. Fallback is 0px so the pre-JS paint still has
-   * the base 2rem from the padding shorthand. */
   padding: 2rem;
   padding-bottom: calc(var(--reader-bottom-padding, 0px) + 2rem);
   display: flex;
@@ -18,16 +12,9 @@
 
 .reader article {
   color: var(--fg);
-  /* The footer's font-scale buttons mutate this variable on body.reader.
-   * Only the article and its descendants reflow when font scale changes —
-   * everything outside (footer, layout) uses absolute units and stays put. */
   font-size: var(--reader-font-scale, 100%);
 }
 
-/* The very first and very last elements of the article sit flush against
- * the article's top/bottom padding — nothing to "breathe" toward on the
- * outside. Null every edge-spacing property so h1/p/pre at the extremes
- * align cleanly with the reader's padding. */
 .reader article > :first-child {
   margin-top: 0;
   padding-top: 0;
@@ -69,12 +56,6 @@
   padding: 0;
 }
 
-/*
- * Multi-theme Shiki: shikiThemes ships ember/phosphor/neutral, each emitting
- * --shiki-<name>, --shiki-<name>-bg, --shiki-<name>-font-style,
- * --shiki-<name>-font-weight, --shiki-<name>-text-decoration on every token
- * span. The active theme class on <html> selects which set to apply.
- */
 .theme-ember .reader pre.astro-code,
 .theme-ember .reader pre.astro-code span {
   color: var(--shiki-ember);
@@ -102,7 +83,6 @@
   text-decoration: var(--shiki-neutral-text-decoration);
 }
 
-/* Scrollbar styling to match theme */
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;

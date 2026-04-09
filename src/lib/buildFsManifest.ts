@@ -24,18 +24,7 @@ export interface BuildFsManifestInput {
   unixVersion: string;
 }
 
-/**
- * Walk the docs collection and produce a static manifest describing the
- * terminal's virtual filesystem. Called from the integration's build hook.
- *
- * A collection entry with id `home/user/authors/frndvrgs` becomes a file
- * at virtual path `/home/user/authors/frndvrgs.md`, slug `frndvrgs`.
- *
- * Throws at build time on duplicate basenames (slug collisions).
- */
-export async function buildFsManifest(
-  input: BuildFsManifestInput,
-): Promise<FsManifest> {
+export async function buildFsManifest(input: BuildFsManifestInput): Promise<FsManifest> {
   const entries = await getCollection('docs');
 
   const dirs: Record<string, { children: string[] }> = {};
@@ -57,7 +46,7 @@ export async function buildFsManifest(
     const segments = entry.id.split('/').filter(Boolean);
     const basename = segments[segments.length - 1]!;
     const slug = basename;
-    const virtualPath = '/' + segments.join('/') + '.md';
+    const virtualPath = `/${segments.join('/')}.md`;
 
     if (seenSlugs.has(slug)) {
       const prev = seenSlugs.get(slug);
@@ -67,21 +56,16 @@ export async function buildFsManifest(
     }
     seenSlugs.set(slug, entry.id);
 
-    // Register parent directory chain.
     let parent = '';
     for (let i = 0; i < segments.length - 1; i++) {
       const name = segments[i]!;
-      const current = parent + '/' + name;
+      const current = `${parent}/${name}`;
       addChild(parent || '/', name);
       addDir(current);
       parent = current;
     }
 
-    // Register the file itself.
-    addChild(parent || '/', basename + '.md');
-    // Byte size of the raw markdown source. The content layer exposes the
-    // body string on every entry; UTF-8 byte length matches char count for
-    // ASCII and is "close enough" for unicode-heavy docs.
+    addChild(parent || '/', `${basename}.md`);
     const body = (entry as { body?: string }).body ?? '';
     files[virtualPath] = {
       slug,
@@ -90,7 +74,6 @@ export async function buildFsManifest(
     };
   }
 
-  // Sort directory children for stable output.
   for (const d of Object.values(dirs)) {
     d.children.sort();
   }

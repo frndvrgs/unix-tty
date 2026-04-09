@@ -3,7 +3,6 @@
   "include": ["src/**/*", "example/**/*"],
   "exclude": ["**/node_modules", "**/dist"],
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "unix-tty/*": ["./src/*"]
     }

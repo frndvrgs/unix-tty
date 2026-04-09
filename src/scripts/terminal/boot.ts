@@ -1,10 +1,10 @@
 import type { UnixTtyConfig } from '../../config.js';
-import { createOutput, isSelecting, renderRichLine } from './output.js';
-import { createFs } from './fs.js';
-import { createTheme } from './theme.js';
-import { createHistory } from './history.js';
-import { complete } from './tabComplete.js';
 import { buildRegistry, commandNames } from './commands/index.js';
+import { createFs } from './fs.js';
+import { createHistory } from './history.js';
+import { createOutput, isSelecting, renderRichLine } from './output.js';
+import { complete } from './tabComplete.js';
+import { createTheme } from './theme.js';
 import type { FsManifest, OutputSink } from './types.js';
 
 export default async function boot(config: UnixTtyConfig): Promise<void> {
@@ -15,12 +15,8 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
   if (!response.ok) throw new Error('unix-tty: failed to load /fs.json');
   const manifest: FsManifest = await response.json();
 
-  const output = createOutput(root, document.scrollingElement as HTMLElement ?? document.documentElement);
+  const output = createOutput(root, root);
 
-  // Optional themed logo above the motd. When the config provides a
-  // URL map, we create an <img> and hand it (along with the URLs) to
-  // the theme controller, which keeps the src in sync with the active
-  // theme on every `colors` cycle.
   let logoElement: HTMLImageElement | undefined;
   if (config.terminal.logo) {
     logoElement = document.createElement('img');
@@ -38,22 +34,16 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
   const registry = buildRegistry();
   const names = commandNames(registry);
 
-  // Motd. If a logo is rendered above, prepend a blank line so the
-  // motd has consistent breathing room from the logo regardless of
-  // future line-height changes. The trailing blank line matches on
-  // the other side so the motd is always wrapped in empty lines.
   if (logoElement) {
     output.dim('');
   }
   for (const raw of manifest.site.motd) {
-    const text = raw
-      .replace('{version}', manifest.site.unixVersion)
-      .replace('{buildDate}', manifest.site.buildDate);
+    const text = raw.replace('{version}', manifest.site.unixVersion).replace('{buildDate}', manifest.site.buildDate);
     output.dim(text);
   }
   output.dim('');
 
-  // Prompt line
+  // prompt line
   const promptLine = document.createElement('div');
   promptLine.className = 'terminal-prompt-line';
   const promptSpan = document.createElement('span');
@@ -74,21 +64,11 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
   };
   updatePrompt();
 
-  // Single helper for any DOM insertion that lands above the prompt.
-  // Handles both the insertBefore and the scroll-to-bottom so every
-  // code path — echo line, command output, command errors, tab
-  // completion candidates — behaves the same way. isSelecting() guards
-  // against stealing a user's active text selection.
   const appendAbovePrompt = (el: HTMLElement) => {
     root.insertBefore(el, promptLine);
-    if (!isSelecting()) window.scrollTo(0, document.body.scrollHeight);
+    if (!isSelecting()) root.scrollTop = root.scrollHeight;
   };
 
-  // The output sink used for everything printed AFTER the prompt line
-  // exists. Every command uses this sink, and so do the "command not
-  // found" and catch-branch errors in run() below — using the
-  // append-only `output` created earlier would cause those errors to
-  // pile up under the prompt and survive clear().
   const commandOut: OutputSink = {
     line: (text) => {
       const el = document.createElement('div');
@@ -126,9 +106,7 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
     },
   };
 
-  // Run a single command line.
   const run = async (line: string) => {
-    // Echo the entered line with the prompt above, as a history-style trace.
     const echoEl = document.createElement('div');
     echoEl.className = 'terminal-line';
     echoEl.textContent = `${promptSpan.textContent}${line}`;
@@ -162,7 +140,7 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
     updatePrompt();
   };
 
-  // Keybindings
+  // keybindings
   input.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
@@ -201,12 +179,6 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
     }
   });
 
-  /**
-   * Insert text at the current cursor position of the input, replacing
-   * any active selection. Used by the delegated click handler below to
-   * turn clickable ls output into a path-composition shortcut for
-   * mobile users who can't easily hit Tab for autocomplete.
-   */
   const insertAtCursor = (text: string) => {
     const start = input.selectionStart ?? input.value.length;
     const end = input.selectionEnd ?? input.value.length;
@@ -216,10 +188,6 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
     input.focus();
   };
 
-  // Delegated handler for any .terminal-clickable span inside the
-  // terminal. Runs before the document-level click-to-focus listener
-  // (via event capture order) so insertAtCursor's focus() call is the
-  // authoritative one.
   root.addEventListener('click', (event) => {
     const target = event.target;
     if (!(target instanceof HTMLElement)) return;
@@ -232,7 +200,7 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
     }
   });
 
-  // Click-to-focus (guarded against selection)
+  // click-to-focus
   document.addEventListener('click', () => {
     if (!isSelecting()) input.focus();
   });

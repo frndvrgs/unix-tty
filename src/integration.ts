@@ -1,6 +1,6 @@
-import type { AstroIntegration } from 'astro';
-import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import type { AstroIntegration } from 'astro';
 import type { UnixTtyConfig } from './config.js';
 import { shikiThemes } from './lib/shikiThemes.js';
 

@@ -14,8 +14,6 @@ export function refreshFavicon(theme: ThemeName): void {
   ctx.fillStyle = colors.bg;
   ctx.fillRect(0, 0, size, size);
 
-  // Padded scaling: leave one pixel-cell of margin on each side, matching
-  // the original 0x0064 favicon. `+2` is the per-side margin in cells.
   const rows = FAVICON_X.length;
   const cols = FAVICON_X[0]!.length;
   const px = Math.floor(size / (Math.max(cols, rows) + 2));

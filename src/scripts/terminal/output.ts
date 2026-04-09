@@ -1,11 +1,5 @@
 import type { LineSegment, OutputSink } from './types.js';
 
-/**
- * Build a .terminal-line <div> from a list of segments. Plain strings
- * become text nodes; objects become <span class="terminal-clickable">
- * with a data-insert attribute that the boot-level click handler reads
- * to insert text at the current cursor position of the input.
- */
 export function renderRichLine(segments: LineSegment[]): HTMLDivElement {
   const el = document.createElement('div');
   el.className = 'terminal-line';

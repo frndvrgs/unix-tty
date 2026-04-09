@@ -23,9 +23,6 @@ function makeTheme(name: string, fg: string, bg: string, dim: string): ThemeJson
   } as ThemeJson;
 }
 
-// Multi-theme mode: ship all three themes simultaneously. Astro/Shiki emits
-// `--shiki-<key>` variables on each token span; reader.css picks the right
-// set based on the active `.theme-<key>` class on <html>.
 export const shikiThemes: NonNullable<ShikiConfig['themes']> = {
   ember: makeTheme('ember', '#ffa133', '#222222', '#7a5a2a'),
   phosphor: makeTheme('phosphor', '#39d353', '#0d1117', '#1b6928'),

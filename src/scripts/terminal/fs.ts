@@ -14,13 +14,13 @@ export function createFs(manifest: FsManifest, home: string): VirtualFs {
       }
       stack.push(p);
     }
-    return '/' + stack.join('/');
+    return `/${stack.join('/')}`;
   };
 
   const resolve = (input: string): string => {
     if (!input) return current;
     if (input === '~') return home;
-    if (input.startsWith('~/')) input = home + '/' + input.slice(2);
+    if (input.startsWith('~/')) input = `${home}/${input.slice(2)}`;
 
     const isAbs = input.startsWith('/');
     const base = isAbs ? [] : current.split('/').filter(Boolean);
@@ -48,11 +48,6 @@ export function createFs(manifest: FsManifest, home: string): VirtualFs {
     const f = entry(path);
     if (!f) throw new Error(`cat: ${path}: no such file`);
     if (cache.has(path)) return cache.get(path)!;
-    // The reader page is at /read/<slug>, but the raw markdown is inside the
-    // content collection which Astro does not serve directly. For `cat`, we
-    // reach into the built HTML of the reader page and extract its text — no
-    // server endpoint needed. Simpler alternative: fetch the rendered page
-    // and parse out the <article> text content.
     const response = await fetch(`/read/${f.slug}/`);
     if (!response.ok) throw new Error(`cat: ${path}: fetch failed (${response.status})`);
     const html = await response.text();
