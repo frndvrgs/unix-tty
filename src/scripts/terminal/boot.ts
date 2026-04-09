@@ -29,7 +29,7 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
 
   const theme = createTheme(manifest.site.defaultTheme, {
     logoElement,
-    logoUrls: config.terminal.logo,
+    logoConfigs: config.terminal.logo,
   });
   const fs = createFs(manifest, manifest.site.home, `${ns}:cwd`);
   const history = createHistory(`${ns}:history`);

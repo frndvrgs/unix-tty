@@ -1,5 +1,16 @@
 export type ThemeName = 'ember' | 'phosphor' | 'neutral';
 
+export type ImageRendering = 'auto' | 'smooth' | 'crisp-edges' | 'pixelated';
+
+export type LogoEntry =
+  | string
+  | {
+      url: string;
+      width?: number;
+      height?: number;
+      imageRendering?: ImageRendering;
+    };
+
 export interface UnixTtyConfig {
   site: {
     title: string;
@@ -12,7 +23,7 @@ export interface UnixTtyConfig {
     home: string;
     defaultTheme: ThemeName;
     motd: string[];
-    logo?: Record<ThemeName, string>;
+    logo?: Record<ThemeName, LogoEntry>;
   };
   reader: {
     theme: ThemeName;
