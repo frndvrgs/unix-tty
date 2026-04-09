@@ -1,6 +1,6 @@
 import type { ThemeName } from '../../config.js';
 import { refreshFavicon } from '../shared/favicon.js';
-import { hapticSuccess } from '../shared/haptics.js';
+import { hapticsCommand } from '../shared/haptics.js';
 import { THEME_NAMES } from '../shared/themes.js';
 
 const FONT_MIN = 50; // percent
@@ -95,9 +95,11 @@ export function initAppFooter(): void {
 
   document.querySelectorAll<HTMLElement>('[data-footer-action]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      // Every button tap fires a success haptic. No-op on devices
-      // without vibration support, so desktop is unaffected.
-      hapticSuccess();
+      // Every button tap fires the light command-level haptic — a
+      // single short pulse, same as a routine terminal command. The
+      // stronger 'run' haptic is reserved for opening an app (read).
+      // No-op on devices without vibration support.
+      hapticsCommand();
       const action = btn.dataset.footerAction;
       if (action === 'font-inc') adjustFontScale(FONT_STEP);
       else if (action === 'font-dec') adjustFontScale(-FONT_STEP);

@@ -15,13 +15,18 @@
   font-size: var(--reader-font-scale, 100%);
 }
 
+/*
+ * Null only the outer MARGIN on the extreme elements, not padding.
+ * Stripping padding was killing the inner breathing room on <pre>
+ * and <code> blocks when they happened to be the first or last
+ * child — code blocks need their padding to look right regardless
+ * of where they sit in the article.
+ */
 .reader article > :first-child {
   margin-top: 0;
-  padding-top: 0;
 }
 .reader article > :last-child {
   margin-bottom: 0;
-  padding-bottom: 0;
 }
 
 .reader article h1,

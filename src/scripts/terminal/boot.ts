@@ -1,12 +1,12 @@
 import type { UnixTtyConfig } from '../../config.js';
-import { hapticError, hapticSuccess } from '../shared/haptics.js';
+import { hapticsCommand, hapticsError, hapticsRun } from '../shared/haptics.js';
 import { buildRegistry, commandNames } from './commands/index.js';
 import { createFs } from './fs.js';
 import { createHistory } from './history.js';
 import { createOutput, isSelecting, renderRichLine } from './output.js';
 import { complete } from './tabComplete.js';
 import { createTheme } from './theme.js';
-import type { FsManifest, OutputSink } from './types.js';
+import type { FsManifest, OutputSink, PostCommandHaptic } from './types.js';
 
 export default async function boot(config: UnixTtyConfig): Promise<void> {
   const root = document.getElementById('terminal');
@@ -76,6 +76,21 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
   // safe — there's never more than one in-flight run at a time.
   let errorDuringRun = false;
 
+  // Default post-command haptic kind. Commands can upgrade their run
+  // to 'run' via `out.haptic('run')` — currently only `read` does.
+  // Error still wins over both via errorDuringRun.
+  //
+  // Accessed through function wrappers below so TS's control-flow
+  // analysis doesn't narrow it to the 'command' literal after each
+  // reset assignment — it can be mutated by commandOut.haptic during
+  // dispatch, and the closing comparison against 'run' must stay
+  // well-typed.
+  let hapticKind: PostCommandHaptic = 'command';
+  const setHapticKind = (kind: PostCommandHaptic) => {
+    hapticKind = kind;
+  };
+  const getHapticKind = (): PostCommandHaptic => hapticKind;
+
   const commandOut: OutputSink = {
     line: (text) => {
       const el = document.createElement('div');
@@ -112,6 +127,9 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
         root.removeChild(root.firstChild);
       }
     },
+    haptic: (kind) => {
+      setHapticKind(kind);
+    },
   };
 
   const run = async (line: string) => {
@@ -126,6 +144,7 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
     history.push(trimmed);
 
     errorDuringRun = false;
+    setHapticKind('command');
 
     const [name, ...args] = trimmed.split(/\s+/);
     const cmd = registry[name!];
@@ -147,14 +166,19 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
       }
     }
 
-    // Haptic feedback: success by default, error whenever commandOut.error
-    // was invoked at any point during this run (unknown command, command's
-    // own error output, or a thrown exception caught above). No-op on
-    // devices without vibration support.
+    // Haptic feedback. Error always wins if commandOut.error fired at
+    // any point during the run (unknown command, command error output,
+    // or caught exception). Otherwise fire the kind the command asked
+    // for via out.haptic(...) — defaults to 'command' (subtle pulse),
+    // upgraded to 'run' by app-launching commands like `read`. All
+    // no-ops on devices without vibration support. Read through
+    // getHapticKind() to dodge TS's narrow-after-assign tracking.
     if (errorDuringRun) {
-      hapticError();
+      hapticsError();
+    } else if (getHapticKind() === 'run') {
+      hapticsRun();
     } else {
-      hapticSuccess();
+      hapticsCommand();
     }
 
     updatePrompt();
