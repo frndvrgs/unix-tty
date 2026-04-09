@@ -40,6 +40,7 @@ export interface HistoryController {
   next(): string | null;
   reset(): void;
   all(): string[];
+  clear(): void;
 }
 
 export interface VirtualFs {

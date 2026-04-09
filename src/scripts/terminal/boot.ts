@@ -16,6 +16,9 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
   if (!response.ok) throw new Error('unix-tty: failed to load /fs.json');
   const manifest: FsManifest = await response.json();
 
+  const ns = `unix-tty:${manifest.site.hostname}`;
+  const outputKey = `${ns}:output`;
+
   const output = createOutput(root, root);
 
   let logoElement: HTMLImageElement | undefined;
@@ -31,20 +34,29 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
     logoUrls: config.terminal.logo,
   });
   const fs = createFs(manifest, manifest.site.home);
-  const history = createHistory();
+  const history = createHistory(`${ns}:history`);
   const registry = buildRegistry();
   const names = commandNames(registry);
 
-  if (logoElement) {
+  let restored = false;
+  try {
+    const saved = localStorage.getItem(outputKey);
+    if (saved) {
+      const frag = document.createRange().createContextualFragment(saved);
+      root.appendChild(frag);
+      restored = true;
+    }
+  } catch {}
+
+  if (!restored) {
+    if (logoElement) output.dim('');
+    for (const raw of manifest.site.motd) {
+      const text = raw.replace('{version}', manifest.site.unixVersion).replace('{buildDate}', manifest.site.buildDate);
+      output.dim(text);
+    }
     output.dim('');
   }
-  for (const raw of manifest.site.motd) {
-    const text = raw.replace('{version}', manifest.site.unixVersion).replace('{buildDate}', manifest.site.buildDate);
-    output.dim(text);
-  }
-  output.dim('');
 
-  // prompt line
   const promptLine = document.createElement('div');
   promptLine.className = 'terminal-prompt-line';
   const promptSpan = document.createElement('span');
@@ -65,26 +77,31 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
   };
   updatePrompt();
 
+  if (restored && !isSelecting()) {
+    root.scrollTop = root.scrollHeight;
+  }
+
+  const saveOutput = () => {
+    let html = '';
+    let node = root.firstChild;
+    while (node && node !== promptLine) {
+      if (node instanceof HTMLElement && !node.classList.contains('terminal-logo')) {
+        html += node.outerHTML;
+      }
+      node = node.nextSibling;
+    }
+    try {
+      localStorage.setItem(outputKey, html);
+    } catch {}
+  };
+
   const appendAbovePrompt = (el: HTMLElement) => {
     root.insertBefore(el, promptLine);
     if (!isSelecting()) root.scrollTop = root.scrollHeight;
+    saveOutput();
   };
 
-  // Flipped to true by commandOut.error below so run() knows which
-  // haptic to fire after a command finishes. Commands execute serially
-  // (each Enter awaits the previous run), so a single shared flag is
-  // safe — there's never more than one in-flight run at a time.
   let errorDuringRun = false;
-
-  // Default post-command haptic kind. Commands can upgrade their run
-  // to 'run' via `out.haptic('run')` — currently only `read` does.
-  // Error still wins over both via errorDuringRun.
-  //
-  // Accessed through function wrappers below so TS's control-flow
-  // analysis doesn't narrow it to the 'command' literal after each
-  // reset assignment — it can be mutated by commandOut.haptic during
-  // dispatch, and the closing comparison against 'run' must stay
-  // well-typed.
   let hapticKind: PostCommandHaptic = 'command';
   const setHapticKind = (kind: PostCommandHaptic) => {
     hapticKind = kind;
@@ -126,6 +143,9 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
       while (root.firstChild && root.firstChild !== promptLine) {
         root.removeChild(root.firstChild);
       }
+      try {
+        localStorage.removeItem(outputKey);
+      } catch {}
     },
     haptic: (kind) => {
       setHapticKind(kind);
@@ -139,7 +159,6 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
     appendAbovePrompt(echoEl);
 
     const trimmed = line.trim();
-    // Empty input (bare Enter) is a no-op: no history, no haptic.
     if (!trimmed) return;
     history.push(trimmed);
 
@@ -166,13 +185,6 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
       }
     }
 
-    // Haptic feedback. Error always wins if commandOut.error fired at
-    // any point during the run (unknown command, command error output,
-    // or caught exception). Otherwise fire the kind the command asked
-    // for via out.haptic(...) — defaults to 'command' (subtle pulse),
-    // upgraded to 'run' by app-launching commands like `read`. All
-    // no-ops on devices without vibration support. Read through
-    // getHapticKind() to dodge TS's narrow-after-assign tracking.
     if (errorDuringRun) {
       hapticsError();
     } else if (getHapticKind() === 'run') {
@@ -184,7 +196,6 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
     updatePrompt();
   };
 
-  // keybindings
   input.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
@@ -244,7 +255,6 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
     }
   });
 
-  // click-to-focus
   document.addEventListener('click', () => {
     if (!isSelecting()) input.focus();
   });

@@ -1,1 +1,1 @@
-export const UNIX_VERSION = '6.6.0-release';
+export const UNIX_VERSION = '6.7.0-release';

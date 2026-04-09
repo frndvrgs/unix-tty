@@ -1,14 +1,28 @@
 import type { HistoryController } from './types.js';
 
-export function createHistory(): HistoryController {
-  const entries: string[] = [];
-  let cursor = 0;
+export function createHistory(storageKey: string): HistoryController {
+  const entries: string[] = (() => {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  })();
+  let cursor = entries.length;
+
+  const persist = () => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(entries));
+    } catch {}
+  };
 
   return {
     push: (entry) => {
       if (!entry.trim()) return;
       entries.push(entry);
       cursor = entries.length;
+      persist();
     },
     prev: () => {
       if (entries.length === 0) return null;
@@ -25,5 +39,12 @@ export function createHistory(): HistoryController {
       cursor = entries.length;
     },
     all: () => [...entries],
+    clear: () => {
+      entries.length = 0;
+      cursor = 0;
+      try {
+        localStorage.removeItem(storageKey);
+      } catch {}
+    },
   };
 }
