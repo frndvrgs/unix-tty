@@ -1,4 +1,27 @@
-import type { OutputSink } from './types.js';
+import type { LineSegment, OutputSink } from './types.js';
+
+/**
+ * Build a .terminal-line <div> from a list of segments. Plain strings
+ * become text nodes; objects become <span class="terminal-clickable">
+ * with a data-insert attribute that the boot-level click handler reads
+ * to insert text at the current cursor position of the input.
+ */
+export function renderRichLine(segments: LineSegment[]): HTMLDivElement {
+  const el = document.createElement('div');
+  el.className = 'terminal-line';
+  for (const seg of segments) {
+    if (typeof seg === 'string') {
+      el.appendChild(document.createTextNode(seg));
+    } else {
+      const span = document.createElement('span');
+      span.className = 'terminal-clickable';
+      span.textContent = seg.text;
+      span.dataset.insert = seg.insert ?? seg.text;
+      el.appendChild(span);
+    }
+  }
+  return el;
+}
 
 export function createOutput(root: HTMLElement, scrollHost: HTMLElement): OutputSink {
   const append = (el: HTMLElement) => {
@@ -11,6 +34,10 @@ export function createOutput(root: HTMLElement, scrollHost: HTMLElement): Output
     el.className = 'terminal-line';
     el.textContent = text;
     append(el);
+  };
+
+  const lineRich = (segments: LineSegment[]) => {
+    append(renderRichLine(segments));
   };
 
   const dim = (text: string) => {
@@ -35,7 +62,7 @@ export function createOutput(root: HTMLElement, scrollHost: HTMLElement): Output
     while (root.firstChild) root.removeChild(root.firstChild);
   };
 
-  return { line, dim, error, block, clear };
+  return { line, lineRich, dim, error, block, clear };
 }
 
 export function isSelecting(): boolean {

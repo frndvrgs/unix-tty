@@ -1,4 +1,4 @@
-import type { Command, VirtualFs } from '../types.js';
+import type { Command, LineSegment, VirtualFs } from '../types.js';
 
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 
@@ -75,10 +75,17 @@ const ls: Command = {
     };
 
     if (!longFmt) {
-      const names: string[] = [];
-      if (showHidden) names.push('.', '..');
-      for (const c of children) names.push(decorate(c));
-      out.line(names.join('  '));
+      const segments: LineSegment[] = [];
+      const pushName = (name: string) => {
+        if (segments.length > 0) segments.push('  ');
+        segments.push({ text: name });
+      };
+      if (showHidden) {
+        pushName('.');
+        pushName('..');
+      }
+      for (const c of children) pushName(decorate(c));
+      out.lineRich(segments);
       return;
     }
 
@@ -104,7 +111,8 @@ const ls: Command = {
     if (isMobile) {
       for (const r of rows) {
         const nlink = String(r.nlink).padStart(nlinkWidth, ' ');
-        out.line(`${r.mode}  ${nlink} ${owner} ${group}  ${r.name}`);
+        const prefix = `${r.mode}  ${nlink} ${owner} ${group}  `;
+        out.lineRich([prefix, { text: r.name }]);
       }
       return;
     }
@@ -117,7 +125,8 @@ const ls: Command = {
     for (const r of rows) {
       const nlink = String(r.nlink).padStart(nlinkWidth, ' ');
       const size = String(r.size).padStart(sizeWidth, ' ');
-      out.line(`${r.mode}  ${nlink} ${owner} ${group}  ${size} ${mtime} ${r.name}`);
+      const prefix = `${r.mode}  ${nlink} ${owner} ${group}  ${size} ${mtime} `;
+      out.lineRich([prefix, { text: r.name }]);
     }
   },
 };

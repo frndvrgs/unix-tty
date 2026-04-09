@@ -14,8 +14,22 @@ export interface FsManifest {
   files: Record<string, { slug: string; title: string; size: number }>;
 }
 
+/**
+ * A segment of a rich line. Plain strings render as text nodes.
+ * Objects render as interactive spans that, when clicked, insert the
+ * `insert` value (falling back to `text`) at the current cursor
+ * position in the terminal input.
+ */
+export type LineSegment = string | { text: string; insert?: string };
+
 export interface OutputSink {
   line(text?: string): void;
+  /**
+   * Print a line composed of plain and interactive segments. Used by
+   * `ls` so file/folder names become tap targets on mobile (where
+   * tab-completion isn't practical).
+   */
+  lineRich(segments: LineSegment[]): void;
   dim(text: string): void;
   error(text: string): void;
   block(lines: string[]): void;

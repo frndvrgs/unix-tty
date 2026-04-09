@@ -1,5 +1,5 @@
 import type { UnixTtyConfig } from '../../config.js';
-import { createOutput, isSelecting } from './output.js';
+import { createOutput, isSelecting, renderRichLine } from './output.js';
 import { createFs } from './fs.js';
 import { createTheme } from './theme.js';
 import { createHistory } from './history.js';
@@ -95,6 +95,9 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
       el.className = 'terminal-line';
       el.textContent = text ?? '';
       appendAbovePrompt(el);
+    },
+    lineRich: (segments) => {
+      appendAbovePrompt(renderRichLine(segments));
     },
     dim: (text) => {
       const el = document.createElement('div');
@@ -195,6 +198,37 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
         appendAbovePrompt(list);
       }
       return;
+    }
+  });
+
+  /**
+   * Insert text at the current cursor position of the input, replacing
+   * any active selection. Used by the delegated click handler below to
+   * turn clickable ls output into a path-composition shortcut for
+   * mobile users who can't easily hit Tab for autocomplete.
+   */
+  const insertAtCursor = (text: string) => {
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? input.value.length;
+    input.value = input.value.slice(0, start) + text + input.value.slice(end);
+    const newPos = start + text.length;
+    input.setSelectionRange(newPos, newPos);
+    input.focus();
+  };
+
+  // Delegated handler for any .terminal-clickable span inside the
+  // terminal. Runs before the document-level click-to-focus listener
+  // (via event capture order) so insertAtCursor's focus() call is the
+  // authoritative one.
+  root.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    const clickable = target.closest<HTMLElement>('.terminal-clickable');
+    if (!clickable) return;
+    const value = clickable.dataset.insert;
+    if (value !== undefined) {
+      event.stopPropagation();
+      insertAtCursor(value);
     }
   });
 

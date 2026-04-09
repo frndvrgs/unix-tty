@@ -1,5 +1,11 @@
 .terminal {
-  min-height: 100vh;
+  /* No min-height: the terminal sizes to its actual content. Setting
+   * min-height: 100vh combined with box-sizing: border-box and the
+   * padding below was creating overflow on mobile — when the software
+   * keyboard opens and the visible viewport shrinks, a 100vh-tall
+   * element stays 100vh and pushes the prompt below the keyboard. The
+   * html/body background (see themes.css) already fills the viewport,
+   * so we don't need the terminal element itself to reach that far. */
   /* 1.6rem = 17.6px at the 11px base, which exactly matches the
    * line-height of a single .terminal-line (11px * 1.6). Every edge
    * of the terminal then has the same vertical rhythm as the lines
@@ -58,4 +64,20 @@
 
 .terminal-error {
   color: var(--fg);
+}
+
+/*
+ * Interactive name inside ls output. Click to insert the name at the
+ * terminal input's current cursor position. No underline by default —
+ * the terminal should stay visually calm. Hover/active highlights the
+ * background so the tap target is unambiguous on mobile.
+ */
+.terminal-clickable {
+  cursor: pointer;
+}
+
+.terminal-clickable:hover,
+.terminal-clickable:active {
+  background: var(--dim);
+  color: var(--bg);
 }
