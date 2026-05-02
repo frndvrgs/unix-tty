@@ -1,6 +1,6 @@
 import type { ThemeName } from '../../config.js';
 
-export const THEME_NAMES: readonly ThemeName[] = ['ember', 'phosphor', 'neutral'] as const;
+export const THEME_NAMES: readonly ThemeName[] = ['phosphor', 'amber', 'void'] as const;
 
 export interface ThemeColors {
   fg: string;
@@ -9,9 +9,9 @@ export interface ThemeColors {
 }
 
 export const THEME_COLORS: Record<ThemeName, ThemeColors> = {
-  ember: { fg: '#ffa133', bg: '#222222', dim: '#7a5a2a' },
-  phosphor: { fg: '#39d353', bg: '#0d1117', dim: '#1b6928' },
-  neutral: { fg: '#ffffff', bg: '#000000', dim: '#555555' },
+  phosphor: { fg: '#39d353', bg: '#0a0f0a', dim: '#1a6629' },
+  amber: { fg: '#ffb000', bg: '#100a00', dim: '#7a5000' },
+  void: { fg: '#ffffff', bg: '#0a0a0a', dim: '#555555' },
 };
 
 export const FAVICON_X: readonly (readonly number[])[] = [

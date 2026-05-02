@@ -51,14 +51,32 @@ function applyLogo(el: HTMLImageElement, entry: LogoEntry | undefined): void {
 }
 
 export interface CreateThemeOptions {
+  storageKey?: string;
   logoElement?: HTMLImageElement;
   logoConfigs?: Partial<Record<ThemeName, LogoEntry>>;
 }
 
 export function createTheme(initial: ThemeName, options: CreateThemeOptions = {}): ThemeController {
-  let current: ThemeName = initial;
+  const { storageKey, logoElement, logoConfigs } = options;
+
+  const loadInitial = (): ThemeName => {
+    if (!storageKey) return initial;
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved && (THEME_NAMES as readonly string[]).includes(saved)) return saved as ThemeName;
+    } catch {}
+    return initial;
+  };
+
+  let current: ThemeName = loadInitial();
   const root = document.documentElement;
-  const { logoElement, logoConfigs } = options;
+
+  const persist = (name: ThemeName) => {
+    if (!storageKey) return;
+    try {
+      localStorage.setItem(storageKey, name);
+    } catch {}
+  };
 
   const apply = (name: ThemeName) => {
     for (const n of THEME_NAMES) root.classList.remove(`theme-${n}`);
@@ -67,9 +85,10 @@ export function createTheme(initial: ThemeName, options: CreateThemeOptions = {}
     if (logoElement && logoConfigs) {
       applyLogo(logoElement, logoConfigs[name]);
     }
+    persist(name);
   };
 
-  apply(initial);
+  apply(current);
 
   return {
     get: () => current,

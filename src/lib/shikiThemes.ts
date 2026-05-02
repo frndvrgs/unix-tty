@@ -24,7 +24,7 @@ function makeTheme(name: string, fg: string, bg: string, dim: string): ThemeJson
 }
 
 export const shikiThemes: NonNullable<ShikiConfig['themes']> = {
-  ember: makeTheme('ember', '#ffa133', '#222222', '#7a5a2a'),
-  phosphor: makeTheme('phosphor', '#39d353', '#0d1117', '#1b6928'),
-  neutral: makeTheme('neutral', '#ffffff', '#000000', '#555555'),
+  phosphor: makeTheme('phosphor', '#39d353', '#0a0f0a', '#1a6629'),
+  amber: makeTheme('amber', '#ffb000', '#100a00', '#7a5000'),
+  void: makeTheme('void', '#ffffff', '#0a0a0a', '#555555'),
 };

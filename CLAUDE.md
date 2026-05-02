@@ -35,13 +35,23 @@ src/
   routes/                injected astro routes (/, /read/[slug], /fs.json)
   layouts/               TerminalLayout, ReaderLayout
   components/            AppFooter (shared footer for reader and future terminal apps)
-  styles/                themes.css, font.css, terminal.css, reader.css
+  styles/                tokens.css, themes.css, font.css, terminal.css, reader.css
   scripts/
     terminal/            boot, output, fs, theme, history, tabComplete, types
-    terminal/commands/   about, cat, cd, clear, colors, date, echo, help, history, ls, pwd, read, uname, whoami
+    terminal/commands/   about, cat, cd, clear, color, date, echo, help, history, ls, pwd, read, uname, whoami
     shared/              themes, favicon, haptics
     footer/              init
   lib/                   buildFsManifest, shikiThemes
   assets/font/           Departure Mono (woff, woff2, LICENSE)
 example/                 minimal consumer site for smoke testing
+docs/
+  plans/                 design notes
+  retro-terminal-style-guide.html  shareable visual reference
+  fonts/                 portable fonts for the style guide
 ```
+
+## Concepts
+
+- **Themes**: `phosphor` (green) and `amber`. Runtime swap via `color` command, persisted in localStorage.
+- **CRT effects**: `scanlines` and `flicker` are build-time toggles in `site.config.ts`.
+- **Tokens**: `src/styles/tokens.css` holds the shareable CSS variable layer (palettes, font, scanline params) mirrored from the style guide.

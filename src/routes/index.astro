@@ -2,7 +2,12 @@
 import TerminalLayout from '../layouts/TerminalLayout.astro';
 import config from 'virtual:unix-tty/config';
 ---
-<TerminalLayout title={config.site.title} theme={config.terminal.defaultTheme}>
+<TerminalLayout
+  title={config.site.title}
+  theme={config.terminal.defaultTheme}
+  scanlines={config.terminal.scanlines}
+  flicker={config.terminal.flicker}
+>
   <script>
     import boot from 'unix-tty/src/scripts/terminal/boot.ts';
     import config from 'virtual:unix-tty/config';

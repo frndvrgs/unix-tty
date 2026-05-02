@@ -7,7 +7,7 @@
 }
 
 html {
-  font-family: "Departure Mono", ui-monospace, monospace;
+  font-family: var(--font-departure);
   font-size: 11px;
   line-height: 1.6;
 }

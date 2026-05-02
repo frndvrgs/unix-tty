@@ -43,18 +43,19 @@ export default defineConfig({
     hostname: 'example',
     username: 'user',
     home: '/home/user',
-    defaultTheme: 'ember',
+    defaultTheme: 'phosphor',
+    scanlines: true,
+    flicker: true,
     motd: [
       'unix {version} | tty0 | utf-8',
       "type 'help' for a list of commands",
     ],
     logo: {
-      ember: '/assets/logo-ember.svg',
       phosphor: '/assets/logo-phosphor.svg',
-      neutral: '/assets/logo-neutral.svg',
+      amber: '/assets/logo-amber.svg',
     },
   },
-  reader: { theme: 'ember' },
+  reader: { theme: 'phosphor' },
 });
 ```
 
@@ -74,11 +75,19 @@ Drop markdown files with a `title` frontmatter into `src/content/docs/`. The fil
 
 ## Commands
 
-`ls`, `cd`, `cat`, `read`, `pwd`, `clear`, `whoami`, `uname`, `date`, `echo`, `history`, `colors`, `help`, `about`, `ll`
+`ls`, `cd`, `cat`, `read`, `pwd`, `clear`, `whoami`, `uname`, `date`, `echo`, `history`, `color`, `help`, `about`, `ll`
 
 ## Themes
 
-`ember`, `phosphor`, `neutral` — cycled at runtime via the `colors` command. Each theme includes matching Shiki syntax highlighting for the reader.
+`phosphor`, `amber`, `void` — swapped at runtime via the `color` command and persisted in localStorage. Each theme includes matching Shiki syntax highlighting for the reader.
+
+## CRT effects
+
+`scanlines` and `flicker` are build-time toggles in `site.config.ts`. Both default to `true`.
+
+## Style guide
+
+See [`docs/retro-terminal-style-guide.html`](docs/retro-terminal-style-guide.html) — a standalone, shareable reference for the phosphor + amber design system.
 
 ## Font
 

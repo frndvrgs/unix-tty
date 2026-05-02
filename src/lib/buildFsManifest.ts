@@ -8,6 +8,8 @@ export interface FsManifest {
     home: string;
     motd: string[];
     defaultTheme: ThemeName;
+    scanlines: boolean;
+    flicker: boolean;
     unixVersion: string;
     buildDate: string;
   };
@@ -21,6 +23,8 @@ export interface BuildFsManifestInput {
   home: string;
   motd: string[];
   defaultTheme: ThemeName;
+  scanlines: boolean;
+  flicker: boolean;
   unixVersion: string;
 }
 
@@ -85,6 +89,8 @@ export async function buildFsManifest(input: BuildFsManifestInput): Promise<FsMa
       home: input.home,
       motd: input.motd,
       defaultTheme: input.defaultTheme,
+      scanlines: input.scanlines,
+      flicker: input.flicker,
       unixVersion: input.unixVersion,
       buildDate: new Date().toISOString().slice(0, 10),
     },

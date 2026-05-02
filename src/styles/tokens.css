@@ -1,0 +1,33 @@
+:root {
+  --phosphor-fg: #39d353;
+  --phosphor-fg-bright: #00ff41;
+  --phosphor-fg-deep: #20c220;
+  --phosphor-dim: #1a6629;
+  --phosphor-bg: #0a0f0a;
+  --phosphor-ghost: rgba(57, 211, 83, 0.06);
+  --phosphor-rule: rgba(57, 211, 83, 0.18);
+  --phosphor-glow: rgba(57, 211, 83, 0.35);
+
+  --amber-fg: #ffb000;
+  --amber-fg-bright: #ffcc33;
+  --amber-fg-deep: #ff8c00;
+  --amber-dim: #7a5000;
+  --amber-bg: #100a00;
+  --amber-ghost: rgba(255, 176, 0, 0.06);
+  --amber-rule: rgba(255, 176, 0, 0.18);
+  --amber-glow: rgba(255, 176, 0, 0.3);
+
+  --void-fg: #ffffff;
+  --void-fg-bright: #ffffff;
+  --void-fg-deep: #bbbbbb;
+  --void-dim: #555555;
+  --void-bg: #0a0a0a;
+  --void-ghost: rgba(255, 255, 255, 0.06);
+  --void-rule: rgba(255, 255, 255, 0.18);
+  --void-glow: rgba(255, 255, 255, 0.25);
+
+  --font-departure: "Departure Mono", ui-monospace, monospace;
+
+  --scanline-opacity: 0.08;
+  --scanline-size: 2px;
+}

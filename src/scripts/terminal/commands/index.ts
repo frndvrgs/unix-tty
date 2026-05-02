@@ -3,7 +3,7 @@ import about from './about.js';
 import cat from './cat.js';
 import cd from './cd.js';
 import clear from './clear.js';
-import colors from './colors.js';
+import color from './color.js';
 import dateCmd from './date.js';
 import echo from './echo.js';
 import historyCmd from './history.js';
@@ -13,7 +13,7 @@ import read from './read.js';
 import uname from './uname.js';
 import whoami from './whoami.js';
 
-const base: Command[] = [ls, cd, cat, read, pwd, clear, whoami, uname, dateCmd, echo, historyCmd, colors, about];
+const base: Command[] = [ls, cd, cat, read, pwd, clear, whoami, uname, dateCmd, echo, historyCmd, color, about];
 
 export function buildRegistry(): Record<string, Command> {
   const registry: Record<string, Command> = {};

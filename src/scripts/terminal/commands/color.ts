@@ -1,12 +1,12 @@
 import type { Command } from '../types.js';
 
-const colors: Command = {
-  name: 'colors',
-  summary: 'cycle through color themes',
+const color: Command = {
+  name: 'color',
+  summary: 'switch color theme',
   run: ({ theme, out }) => {
     const next = theme.cycle();
     out.line(`theme: ${next}`);
   },
 };
 
-export default colors;
+export default color;

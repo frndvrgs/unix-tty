@@ -10,10 +10,12 @@ export default defineConfig({
     hostname: 'example',
     username: 'user',
     home: '/home/user',
-    defaultTheme: 'ember',
+    defaultTheme: 'phosphor',
+    scanlines: true,
+    flicker: true,
     motd: ['unix {version} | tty0 | utf-8', 'last login: {buildDate}', "type 'help' for a list of commands"],
   },
   reader: {
-    theme: 'ember',
+    theme: 'phosphor',
   },
 });

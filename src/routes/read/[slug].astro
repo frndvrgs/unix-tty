@@ -15,7 +15,12 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 ---
-<ReaderLayout title={entry.data.title} theme={config.reader.theme}>
+<ReaderLayout
+  title={entry.data.title}
+  theme={config.reader.theme}
+  scanlines={config.terminal.scanlines}
+  flicker={config.terminal.flicker}
+>
   <main>
     <article>
       <Content />

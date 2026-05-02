@@ -1,4 +1,4 @@
-export type ThemeName = 'ember' | 'phosphor' | 'neutral';
+export type ThemeName = 'phosphor' | 'amber' | 'void';
 
 export type ImageRendering = 'auto' | 'smooth' | 'crisp-edges' | 'pixelated';
 
@@ -22,6 +22,8 @@ export interface UnixTtyConfig {
     username: string;
     home: string;
     defaultTheme: ThemeName;
+    scanlines: boolean;
+    flicker: boolean;
     motd: string[];
     logo?: Record<ThemeName, LogoEntry>;
   };

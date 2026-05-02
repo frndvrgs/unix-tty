@@ -28,6 +28,7 @@ export default async function boot(config: UnixTtyConfig): Promise<void> {
   }
 
   const theme = createTheme(manifest.site.defaultTheme, {
+    storageKey: `${ns}:theme`,
     logoElement,
     logoConfigs: config.terminal.logo,
   });

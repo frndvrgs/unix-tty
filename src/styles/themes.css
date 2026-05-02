@@ -1,25 +1,45 @@
 :root {
-  --fg: #ffa133;
-  --bg: #222222;
-  --dim: #7a5a2a;
-}
-
-.theme-ember {
-  --fg: #ffa133;
-  --bg: #222222;
-  --dim: #7a5a2a;
+  --fg: var(--phosphor-fg);
+  --fg-bright: var(--phosphor-fg-bright);
+  --fg-deep: var(--phosphor-fg-deep);
+  --dim: var(--phosphor-dim);
+  --bg: var(--phosphor-bg);
+  --ghost: var(--phosphor-ghost);
+  --rule: var(--phosphor-rule);
+  --glow: var(--phosphor-glow);
 }
 
 .theme-phosphor {
-  --fg: #39d353;
-  --bg: #0d1117;
-  --dim: #1b6928;
+  --fg: var(--phosphor-fg);
+  --fg-bright: var(--phosphor-fg-bright);
+  --fg-deep: var(--phosphor-fg-deep);
+  --dim: var(--phosphor-dim);
+  --bg: var(--phosphor-bg);
+  --ghost: var(--phosphor-ghost);
+  --rule: var(--phosphor-rule);
+  --glow: var(--phosphor-glow);
 }
 
-.theme-neutral {
-  --fg: #ffffff;
-  --bg: #000000;
-  --dim: #555555;
+.theme-amber {
+  --fg: var(--amber-fg);
+  --fg-bright: var(--amber-fg-bright);
+  --fg-deep: var(--amber-fg-deep);
+  --dim: var(--amber-dim);
+  --bg: var(--amber-bg);
+  --ghost: var(--amber-ghost);
+  --rule: var(--amber-rule);
+  --glow: var(--amber-glow);
+}
+
+.theme-void {
+  --fg: var(--void-fg);
+  --fg-bright: var(--void-fg-bright);
+  --fg-deep: var(--void-fg-deep);
+  --dim: var(--void-dim);
+  --bg: var(--void-bg);
+  --ghost: var(--void-ghost);
+  --rule: var(--void-rule);
+  --glow: var(--void-glow);
 }
 
 html,

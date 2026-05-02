@@ -5,6 +5,53 @@ body.terminal-page {
   overflow: hidden;
 }
 
+body.terminal-page {
+  position: relative;
+}
+
+body.terminal-page::before,
+body.reader::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent var(--scanline-size),
+    rgba(0, 0, 0, var(--scanline-opacity)) var(--scanline-size),
+    rgba(0, 0, 0, var(--scanline-opacity)) calc(var(--scanline-size) * 2)
+  );
+  pointer-events: none;
+  z-index: 999;
+  display: none;
+}
+
+html.scanlines-on body.terminal-page::before,
+html.scanlines-on body.reader::before {
+  display: block;
+}
+
+@keyframes phosphor-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  93% {
+    opacity: 0.97;
+  }
+  94% {
+    opacity: 1;
+  }
+}
+
+html.flicker-on body.terminal-page,
+html.flicker-on body.reader {
+  animation: phosphor-flicker 8s infinite;
+}
+
 .terminal {
   height: 100%;
   overflow-y: auto;
@@ -13,6 +60,8 @@ body.terminal-page {
   color: var(--fg);
   background: var(--bg);
   cursor: text;
+  position: relative;
+  z-index: 1;
 }
 
 .terminal-line {

@@ -1,6 +1,8 @@
 ---
+import '../styles/tokens.css';
 import '../styles/themes.css';
 import '../styles/font.css';
+import '../styles/terminal.css';
 import '../styles/reader.css';
 import AppFooter from '../components/AppFooter.astro';
 import type { ThemeName } from '../config.js';
@@ -8,12 +10,19 @@ import type { ThemeName } from '../config.js';
 interface Props {
   title: string;
   theme: ThemeName;
+  scanlines: boolean;
+  flicker: boolean;
 }
 
-const { title, theme } = Astro.props;
+const { title, theme, scanlines, flicker } = Astro.props;
+const classes = [
+  `theme-${theme}`,
+  scanlines ? 'scanlines-on' : 'scanlines-off',
+  flicker ? 'flicker-on' : 'flicker-off',
+].join(' ');
 ---
 <!doctype html>
-<html lang="en" class={`theme-${theme}`}>
+<html lang="en" class={classes}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, interactive-widget=resizes-content" />

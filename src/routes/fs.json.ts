@@ -12,6 +12,8 @@ export const GET: APIRoute = async () => {
     home: config.terminal.home,
     motd: config.terminal.motd,
     defaultTheme: config.terminal.defaultTheme,
+    scanlines: config.terminal.scanlines,
+    flicker: config.terminal.flicker,
     unixVersion: UNIX_VERSION,
   });
 
